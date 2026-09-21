@@ -1,0 +1,42 @@
+title: $:/plugins/samsmith/codemirror6/readme
+
+! CodeMirror 6 editor
+
+Replaces TiddlyWiki's default plain-textarea tiddler editor with [[CodeMirror 6|https://codemirror.net/]], across every tiddler type: wikitext, JavaScript, CSS, HTML, JSON, Markdown, and plain text.
+
+!! Features
+
+* Syntax highlighting, matched to each tiddler's content type (with a purpose-built highlighter for TiddlyWiki wikitext: headings, `''bold''`, `//italic//`, `[[links]]`, `{{transclusions}}`, `<<macros>>`, code blocks, and more)
+* Line numbers, active-line highlighting, and an optional code-folding gutter
+* Bracket matching and auto-closing brackets/quotes
+* Auto-indent, with configurable tab size and tabs-vs-spaces
+* Autocomplete: typing `[[` or `{{` suggests tiddler titles, typing `<<` suggests macro/widget names, and JS/CSS/HTML get their own language-aware completions
+* Find and replace (`Mod-F` to open the search panel)
+* Optional Vim or Emacs keybindings, switchable from the control panel
+* Editor chrome matches your active TiddlyWiki palette
+
+Configure all of the above from ''Control panel → Settings → CodeMirror 6''.
+
+!! Keyboard shortcuts
+
+Besides TiddlyWiki's own tiddler-editing shortcuts (save/cancel etc.), the editor itself understands the usual CodeMirror bindings:
+
+|!Shortcut |!Action |
+|`Mod-Z` / `Mod-Shift-Z` |Undo / redo |
+|`Mod-F` |Open find (and replace) |
+|`Mod-G` / `Shift-Mod-G` |Find next / previous |
+|`Mod-/` |Toggle line comment |
+|`Mod-[` / `Mod-]` |Indent less / more |
+|`Mod-Alt-\[` |Fold code at cursor (when the fold gutter is enabled) |
+|`Tab` |Accept the current autocomplete suggestion, or indent |
+
+With ''Vim'' or ''Emacs'' keybindings selected in settings, the respective editor's own key bindings take over inside the text area.
+
+!! How it's built
+
+This plugin bundles [[CodeMirror 6|https://codemirror.net/]] (state, view, language, autocomplete, search, and language packages for JavaScript/CSS/HTML/JSON/Markdown, plus `@replit/codemirror-vim`) into a single library tiddler with `esbuild`, and wires it up through TiddlyWiki's standard editor-engine mechanism (`$:/config/EditorTypeMappings/`, an `edit-codemirror6` widget built with `editTextWidgetFactory`, matching how the official `$:/plugins/tiddlywiki/codemirror` plugin integrates CodeMirror 5). The build sources live alongside the plugin folder in `../build`, should you want to change languages, add a highlight tag, or update dependencies and re-bundle.
+
+!! Known limitations
+
+* Settings changes apply to editors opened *after* the change, not to an editor already on screen.
+* The wikitext highlighter is a lightweight approximation of TiddlyWiki's grammar, tuned for readability rather than 100% grammatical accuracy.

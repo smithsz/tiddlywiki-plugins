@@ -1,0 +1,3 @@
+title: $:/temp/export-codemirror6
+
+<$macrocall $name="jsontiddlers" filter="[[$:/plugins/samsmith/codemirror6]]" $output="text/raw"/>

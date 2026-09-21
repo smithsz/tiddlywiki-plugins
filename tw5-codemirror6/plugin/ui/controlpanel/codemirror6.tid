@@ -1,0 +1,38 @@
+title: $:/core/ui/ControlPanel/Settings/CodeMirror6
+tags: $:/tags/ControlPanel/SettingsTab
+caption: CodeMirror 6
+list-after: $:/core/ui/ControlPanel/Settings/TiddlyWiki
+
+These settings control the [[CodeMirror 6 editor|$:/plugins/samsmith/codemirror6]] used for editing tiddlers. Changes apply the next time you open a tiddler for editing.
+
+!! Keybindings
+
+<$select tiddler="$:/config/codemirror6/keyMap" default="default">
+<option value="default">Default</option>
+<option value="vim">Vim</option>
+<option value="emacs">Emacs</option>
+</$select>
+
+!! Appearance
+
+<$checkbox tiddler="$:/config/codemirror6/lineNumbers" field="text" checked="true" unchecked="false" default="true"> Line numbers</$checkbox>
+
+<$checkbox tiddler="$:/config/codemirror6/lineWrapping" field="text" checked="true" unchecked="false" default="false"> Wrap long lines</$checkbox>
+
+<$checkbox tiddler="$:/config/codemirror6/activeLine" field="text" checked="true" unchecked="false" default="true"> Highlight the active line</$checkbox>
+
+<$checkbox tiddler="$:/config/codemirror6/foldGutter" field="text" checked="true" unchecked="false" default="false"> Code folding gutter</$checkbox>
+
+!! Editing
+
+<$checkbox tiddler="$:/config/codemirror6/closeBrackets" field="text" checked="true" unchecked="false" default="true"> Auto-close brackets and quotes</$checkbox>
+
+<$checkbox tiddler="$:/config/codemirror6/autocomplete" field="text" checked="true" unchecked="false" default="true"> Autocomplete tiddler links, transclusions and macros</$checkbox>
+
+<$checkbox tiddler="$:/config/codemirror6/highlightSelectionMatches" field="text" checked="true" unchecked="false" default="true"> Highlight other occurrences of the current selection</$checkbox>
+
+<$checkbox tiddler="$:/config/codemirror6/indentWithTabs" field="text" checked="true" unchecked="false" default="false"> Indent with tabs instead of spaces</$checkbox>
+
+Tab size: <$edit-text tiddler="$:/config/codemirror6/tabSize" tag="input" type="number" default="4" class="tc-edit-texteditor"/>
+
+<$link to="$:/plugins/samsmith/codemirror6/readme">{{$:/core/images/info-button}} About this editor &amp; keyboard shortcuts</$link>

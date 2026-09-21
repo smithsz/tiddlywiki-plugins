@@ -1,0 +1,150 @@
+title: $:/plugins/samsmith/codemirror6/styles
+tags: [[$:/tags/Stylesheet]]
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline macrocallblock
+
+.cm6tw-wrapper {
+	display: block;
+	border: 1px solid <<colour tiddler-editor-border>>;
+	border-radius: 3px;
+	line-height: 1.5;
+	font-family: {{$:/themes/tiddlywiki/vanilla/settings/editorfontfamily}};
+	font-size: {{$:/themes/tiddlywiki/vanilla/metrics/bodyfontsize}};
+	overflow: hidden;
+}
+
+.tc-tiddler-frame .tc-tiddler-editor .tc-edit-texteditor,
+.tc-tiddler-frame .tc-tiddler-editor .tc-tiddler-preview-preview {
+	overflow: auto;
+}
+
+.cm6tw-wrapper .cm-editor {
+	background-color: <<colour tiddler-editor-background>>;
+	color: <<colour foreground>>;
+	height: 100%;
+}
+
+.cm6tw-wrapper .cm-editor.cm-focused {
+	outline: 2px solid <<colour primary>>;
+	outline-offset: -1px;
+}
+
+.cm6tw-wrapper .cm-scroller {
+	font-family: inherit;
+	line-height: inherit;
+}
+
+.cm6tw-wrapper .cm-gutters {
+	background-color: <<colour tiddler-editor-background>>;
+	color: <<colour foreground>>;
+	border-right: 1px solid <<colour tiddler-editor-border>>;
+	opacity: 0.6;
+}
+
+.cm6tw-wrapper .cm-activeLineGutter,
+.cm6tw-wrapper .cm-activeLine {
+	background-color: rgba(127,127,127,0.15);
+}
+
+.cm6tw-wrapper .cm-selectionBackground,
+.cm6tw-wrapper ::selection {
+	background-color: <<colour primary>> !important;
+	opacity: 0.35;
+}
+
+.cm6tw-wrapper .cm-cursor,
+.cm6tw-wrapper .cm-dropCursor {
+	border-left: 2px solid <<colour foreground>>;
+}
+
+.cm6tw-wrapper .cm-matchingBracket {
+	background-color: rgba(133,153,0,0.25);
+	font-weight: bold;
+}
+
+.cm6tw-wrapper .cm-nonmatchingBracket {
+	background-color: rgba(220,50,47,0.25);
+}
+
+.cm6tw-wrapper .cm-placeholder {
+	color: <<colour foreground>>;
+	opacity: 0.5;
+}
+
+.cm6tw-wrapper .cm-foldGutter .cm-gutterElement {
+	cursor: pointer;
+}
+
+/* Search / replace panel */
+
+.cm6tw-wrapper .cm-panels {
+	background-color: <<colour tiddler-background>>;
+	color: <<colour foreground>>;
+	border-top: 1px solid <<colour tiddler-editor-border>>;
+}
+
+.cm6tw-wrapper .cm-panel input,
+.cm6tw-wrapper .cm-panel button {
+	background-color: <<colour tiddler-editor-background>>;
+	color: <<colour foreground>>;
+	border: 1px solid <<colour tiddler-editor-border>>;
+	border-radius: 3px;
+	padding: 2px 4px;
+}
+
+.cm6tw-wrapper .cm-searchMatch {
+	background-color: rgba(243,155,53,0.3);
+	outline: 1px solid #f39b35;
+}
+
+.cm6tw-wrapper .cm-searchMatch-selected {
+	background-color: rgba(243,155,53,0.6);
+}
+
+/* Autocomplete tooltip */
+
+.cm6tw-wrapper .cm-tooltip {
+	background-color: <<colour tiddler-background>>;
+	border: 1px solid <<colour tiddler-editor-border>>;
+	border-radius: 3px;
+}
+
+.cm6tw-wrapper .cm-tooltip-autocomplete ul li[aria-selected] {
+	background-color: <<colour primary>>;
+	color: <<colour background>>;
+}
+
+.cm6tw-wrapper .cm-completionLabel {
+	color: inherit;
+}
+
+.cm6tw-wrapper .cm-completionMatchedText {
+	text-decoration: none;
+	font-weight: bold;
+	color: <<colour primary>>;
+}
+
+/* Syntax token colours (deliberately theme-independent so text stays
+   legible on both light and dark tiddler-editor-background choices) */
+
+.cm6tw-wrapper .cm6tw-tok-keyword { color: #cb4b16; font-weight: 600; }
+.cm6tw-wrapper .cm6tw-tok-name { color: #839496; }
+.cm6tw-wrapper .cm6tw-tok-property { color: #2aa198; }
+.cm6tw-wrapper .cm6tw-tok-function { color: #268bd2; }
+.cm6tw-wrapper .cm6tw-tok-constant { color: #d33682; }
+.cm6tw-wrapper .cm6tw-tok-definition { color: #2aa198; }
+.cm6tw-wrapper .cm6tw-tok-type { color: #6c71c4; }
+.cm6tw-wrapper .cm6tw-tok-operator { color: #6c71c4; }
+.cm6tw-wrapper .cm6tw-tok-link { color: #268bd2; text-decoration: underline; }
+.cm6tw-wrapper .cm6tw-tok-tag { color: #93a1a1; }
+.cm6tw-wrapper .cm6tw-tok-attribute { color: #b58900; }
+.cm6tw-wrapper .cm6tw-tok-string { color: #859900; }
+.cm6tw-wrapper .cm6tw-tok-monospace { color: #859900; }
+.cm6tw-wrapper .cm6tw-tok-comment { color: #93a1a1; font-style: italic; }
+.cm6tw-wrapper .cm6tw-tok-strong { color: inherit; font-weight: bold; }
+.cm6tw-wrapper .cm6tw-tok-emphasis { color: inherit; font-style: italic; }
+.cm6tw-wrapper .cm6tw-tok-strikethrough { color: inherit; text-decoration: line-through; }
+.cm6tw-wrapper .cm6tw-tok-heading { color: #b58900; font-weight: bold; }
+.cm6tw-wrapper .cm6tw-tok-transclusion { color: #d33682; }
+.cm6tw-wrapper .cm6tw-tok-structure { color: #cb4b16; }
+.cm6tw-wrapper .cm6tw-tok-invalid { color: #dc322f; text-decoration: wavy underline; }
