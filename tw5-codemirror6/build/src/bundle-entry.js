@@ -17,7 +17,7 @@ import {
 	indentUnit, foldGutter, foldKeymap, StreamLanguage, LanguageSupport
 } from "@codemirror/language";
 import {
-	autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap
+	acceptCompletion, autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap
 } from "@codemirror/autocomplete";
 import {searchKeymap, highlightSelectionMatches, openSearchPanel} from "@codemirror/search";
 import {tags as t} from "@lezer/highlight";
@@ -242,6 +242,10 @@ function CM6Editor(options) {
 				...foldKeymap,
 				...completionKeymap,
 				{key: "Mod-/", run: toggleComment},
+				// Tab accepts an open completion first, and only indents when there is
+				// none - acceptCompletion returns false when no completion is active,
+				// so the indentWithTab binding below still gets its turn.
+				{key: "Tab", run: acceptCompletion},
 				indentWithTab
 			]),
 			EditorView.domEventHandlers(domEventHandlers),
