@@ -143,6 +143,7 @@ function CM6Editor(options) {
 	this.readOnlyCompartment = new Compartment();
 	this.indentCompartment = new Compartment();
 	this.placeholderCompartment = new Compartment();
+	this.contentAttributesCompartment = new Compartment();
 	this.currentType = options.type;
 	this.settings = Object.assign({
 		lineNumbers: true,
@@ -154,7 +155,8 @@ function CM6Editor(options) {
 		autocomplete: true,
 		keymap: "default",
 		tabSize: 4,
-		indentWithTabs: false
+		indentWithTabs: false,
+		spellcheck: true
 	}, options.settings || {});
 
 	const langInfo = languageForType(options.type);
@@ -233,6 +235,9 @@ function CM6Editor(options) {
 			this.autocompleteCompartment.of(buildAutocompleteExtensions(this.settings, combinedSources)),
 			this.readOnlyCompartment.of(EditorState.readOnly.of(!!options.readOnly)),
 			this.placeholderCompartment.of(options.placeholder ? placeholderExt(options.placeholder) : []),
+			this.contentAttributesCompartment.of(EditorView.contentAttributes.of({
+				spellcheck: this.settings.spellcheck ? "true" : "false"
+			})),
 			this.keymapCompartment.of(buildKeymapExtensions(this.settings.keymap)),
 			keymap.of([
 				...closeBracketsKeymap,
@@ -321,6 +326,9 @@ CM6Editor.prototype.reconfigureSettings = function(newSettings) {
 			this.featuresCompartment.reconfigure(buildFeatureExtensions(this.settings)),
 			this.autocompleteCompartment.reconfigure(buildAutocompleteExtensions(this.settings, combinedSources)),
 			this.keymapCompartment.reconfigure(buildKeymapExtensions(this.settings.keymap)),
+			this.contentAttributesCompartment.reconfigure(EditorView.contentAttributes.of({
+				spellcheck: this.settings.spellcheck ? "true" : "false"
+			})),
 			this.indentCompartment.reconfigure([
 				indentUnit.of(this.settings.indentWithTabs ? "\t" : " ".repeat(this.settings.tabSize)),
 				EditorState.tabSize.of(this.settings.tabSize)

@@ -33,6 +33,8 @@ These settings control the [[CodeMirror 6 editor|$:/plugins/samsmith/codemirror6
 
 <$checkbox tiddler="$:/config/codemirror6/indentWithTabs" field="text" checked="true" unchecked="false" default="false"> Indent with tabs instead of spaces</$checkbox>
 
+<$checkbox tiddler="$:/config/codemirror6/spellcheck" field="text" checked="true" unchecked="false" default="true"> Enable spell checking</$checkbox>
+
 Tab size: <$edit-text tiddler="$:/config/codemirror6/tabSize" tag="input" type="number" default="4" class="tc-edit-texteditor"/>
 
 <$link to="$:/plugins/samsmith/codemirror6/readme">{{$:/core/images/info-button}} About this editor &amp; keyboard shortcuts</$link>

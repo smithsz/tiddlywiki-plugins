@@ -48,7 +48,8 @@ function getConfig() {
 		autocomplete: getBoolConfig(CONFIG_PREFIX + "autocomplete",true),
 		indentWithTabs: getBoolConfig(CONFIG_PREFIX + "indentWithTabs",false),
 		tabSize: getIntConfig(CONFIG_PREFIX + "tabSize",4),
-		keymap: $tw.wiki.getTiddlerText(CONFIG_PREFIX + "keyMap","default")
+		keymap: $tw.wiki.getTiddlerText(CONFIG_PREFIX + "keyMap","default"),
+		spellcheck: getBoolConfig(CONFIG_PREFIX + "spellcheck",true)
 	};
 }
 
