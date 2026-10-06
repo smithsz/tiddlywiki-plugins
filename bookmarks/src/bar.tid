@@ -9,7 +9,7 @@
 <$button popup="$:/state/bookmarks/add" class="bm-tool" tooltip="Add a bookmark" aria-label="Add a bookmark">+</$button>
 <$button to="$:/plugins/claude/bookmarks/manager" class="bm-tool" tooltip="Manage bookmarks" aria-label="Manage bookmarks">☰</$button>
 </div>
-<$reveal type="popup" state="$:/state/bookmarks/add" position="belowright" tag="div" class="bm-pop tc-popup-keep">
+<$reveal type="popup" state="$:/state/bookmarks/add" position="belowleft" clamp="both" tag="div" class="bm-pop tc-popup-keep">
 <$transclude tiddler="$:/plugins/claude/bookmarks/templates/add-form"/>
 </$reveal>
 </div>

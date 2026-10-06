@@ -3,7 +3,7 @@
 <$list filter="[<bmmode>!match[menu]]" variable="bmnone">
 <$vars bmstate={{{ [[$:/state/bookmarks/pop/]addsuffix<bmpath>] }}}>
 <$button popup=<<bmstate>> class="bm-item bm-folder" tooltip=<<bmpath>>><$transclude tiddler="$:/plugins/claude/bookmarks/templates/folder-icon"/><span class="bm-label"><$text text=<<bmname>>/></span></$button>
-<$reveal type="popup" state=<<bmstate>> position="belowleft" tag="div" class="bm-menu tc-popup-keep">
+<$reveal type="popup" state=<<bmstate>> position="below" clamp="both" tag="div" class="bm-menu tc-popup-keep">
 <$vars bmfolder=<<bmpath>>><$transclude tiddler="$:/plugins/claude/bookmarks/templates/menu"/></$vars>
 </$reveal>
 </$vars>

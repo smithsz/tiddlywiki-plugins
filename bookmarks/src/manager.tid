@@ -16,7 +16,7 @@
 <$button class="bm-mbtn" tooltip="Move this folder down"><$action-bookmarkmove entry={{{ [[f:]addsuffix<bmf>] }}} folder={{{ [<bmf>bookmarkparent[]] }}} direction="down"/>↓</$button>
 <$button popup=<<bmstate>> class="bm-mbtn" tooltip="Rename or move this folder"><$action-setfield $tiddler="$:/temp/bookmarks/rename-to" text=<<bmf>>/>✎</$button>
 </div>
-<$reveal type="popup" state=<<bmstate>> position="belowleft" tag="div" class="bm-pop tc-popup-keep">
+<$reveal type="popup" state=<<bmstate>> position="belowleft" clamp="both" tag="div" class="bm-pop tc-popup-keep">
 <div class="bm-pop-head">Folder path</div>
 <div class="bm-field"><$edit-text tiddler="$:/temp/bookmarks/rename-to" tag="input" default="" class="bm-input" placeholder="Dev/Tools"/></div>
 <div class="bm-pop-note">Use / to nest. Leave it blank to empty the folder out onto the bar.</div>
