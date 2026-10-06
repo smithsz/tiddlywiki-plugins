@@ -9,7 +9,9 @@ A collection of [TiddlyWiki](https://tiddlywiki.com/) plugins.
 A browser-style bookmark bar: a narrow strip of favicon-and-name links with
 folders that drop open underneath, a ☆ toolbar button for bookmarking the
 tiddler you are reading, and a manager tiddler for reordering and renaming.
-Bookmarks can point at a URL or at another tiddler.
+Bookmarks can point at a URL or at another tiddler. Drag bookmarks along the
+bar or into folders to rearrange them, and drop a tiddler or a link onto the
+bar to bookmark it.
 
 Install by dragging `bookmarks.json` into a TiddlyWiki, or importing it. Then
 open the *Bookmarks* tiddler, or add it to *$:/DefaultTiddlers*.

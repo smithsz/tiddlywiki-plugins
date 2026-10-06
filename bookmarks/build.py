@@ -17,6 +17,8 @@ tiddlers = [
     js("core.js", "library"),
     js("filters.js", "filteroperator"),
     js("widgets.js", "widget"),
+    js("icon.js", "widget"),
+    js("drag.js", "widget"),
 
     {"title": "%s/bar" % P, "text": read("bar.tid")},
     {"title": "%s/templates/entry" % P, "text": read("entry.tid")},
@@ -54,7 +56,7 @@ plugin = {
     "name": "Bookmarks",
     "description": "A browser-style bookmark bar: a narrow strip of links with folders that expand",
     "author": "Claude",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "core-version": ">=5.2.0",
     "plugin-type": "plugin",
     "dependents": "",

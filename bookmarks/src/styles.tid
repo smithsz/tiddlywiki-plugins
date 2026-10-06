@@ -8,53 +8,87 @@
 .tc-tiddler-frame[data-tiddler-title="Bookmarks"] .tc-tiddler-controls{position:absolute;right:12px;top:7px;z-index:5;opacity:0;transition:opacity .2s;}
 .tc-tiddler-frame[data-tiddler-title="Bookmarks"]:hover .tc-tiddler-controls{opacity:.8;}
 
-.bm-bar{display:flex;align-items:center;gap:6px;min-width:0;font-size:12.5px;line-height:16px;}
-.bm-bar-items{display:flex;align-items:center;gap:1px;flex:1 1 auto;min-width:0;overflow-x:auto;overflow-y:hidden;padding-bottom:1px;scrollbar-width:thin;}
+.bm-bar{display:flex;align-items:center;gap:6px;min-width:0;font-size:12.5px;line-height:1;}
+/*
+Leave .bm-bar-items unpositioned. TiddlyWiki positions a popup at its
+button's offsetLeft/offsetTop, which only lands correctly while the button
+and the popup share an offsetParent — position:relative here would become
+the offsetParent of the buttons but not of the dropdowns hanging off them.
+*/
+.bm-bar-items{display:flex;align-items:center;gap:6px;flex:1 1 auto;min-width:0;padding:1px 2px 2px 0;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;}
 .bm-bar-items::-webkit-scrollbar{height:5px;}
 .bm-bar-items::-webkit-scrollbar-track{background:transparent;}
 .bm-bar-items::-webkit-scrollbar-thumb{background:rgba(127,127,127,.3);border-radius:3px;}
 
-.bm-item{display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;max-width:190px;margin:0;padding:4px 8px;border:none;border-radius:6px;background:transparent;color:inherit;font:inherit;font-size:12.5px;line-height:16px;text-align:left;text-decoration:none;white-space:nowrap;cursor:pointer;}
-.bm-item:hover,.bm-item:focus-visible{background:rgba(127,127,127,.18);text-decoration:none;}
+/* One bar row: a 26px high pill, icon and label centred on the same axis */
+.bm-item{position:relative;display:inline-flex;align-items:center;gap:8px;box-sizing:border-box;flex:0 0 auto;height:26px;max-width:190px;margin:0;padding:0 9px;border:none;border-radius:7px;background:transparent;color:inherit;font:inherit;font-size:12.5px;line-height:1;text-align:left;text-decoration:none;white-space:nowrap;cursor:pointer;transition:background-color .13s ease;}
+.bm-item:hover,.bm-item:focus-visible{background:rgba(127,127,127,.16);text-decoration:none;}
+.bm-item:active{background:rgba(127,127,127,.24);}
+.bm-item:focus-visible{outline:none;box-shadow:inset 0 0 0 2px rgba(87,120,216,.55);box-shadow:inset 0 0 0 2px <<colour primary>>;}
 .bm-item.tc-tiddlylink,.bm-item.tc-tiddlylink:hover,a.bm-item,a.bm-item:hover{color:inherit;}
-.bm-item .bm-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bm-item .bm-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .bm-folder-open{background:rgba(127,127,127,.14);}
 
-.bm-ico{flex:0 0 16px;width:16px;height:16px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;background-repeat:no-repeat;background-position:center center;background-size:16px 16px;color:#fff;font-size:9.5px;font-weight:700;}
-.bm-ico-folder{border-radius:0;color:inherit;}
-.bm-folder-svg{width:16px;height:16px;fill:currentColor;opacity:.62;}
+/* Hairline divider sitting in the gap to the left of every bar item but the first */
+.bm-bar-items > .bm-item::before{content:"";position:absolute;left:-3px;top:50%;width:1px;height:16px;transform:translateY(-50%);background:rgba(127,127,127,.26);}
+.bm-bar-items > .bm-item:first-child::before{display:none;}
 
-.bm-bar-tools{display:flex;align-items:center;gap:2px;flex:0 0 auto;opacity:0;transition:opacity .15s;}
+.bm-ico{position:relative;flex:0 0 16px;width:16px;height:16px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(127,127,127,.18);color:#fff;font-size:10px;font-weight:700;line-height:1;letter-spacing:.2px;vertical-align:middle;}
+.bm-ico-text{line-height:1;}
+.bm-ico-img{position:absolute;left:0;top:0;width:16px;height:16px;}
+/* The favicon loaded, so it no longer needs the colour or the initial under it */
+.bm-ico-loaded{box-shadow:none;}
+.bm-ico-loaded .bm-ico-text{display:none;}
+.bm-ico-folder{border-radius:0;box-shadow:none;color:inherit;}
+.bm-folder-svg{display:block;width:16px;height:16px;fill:currentColor;opacity:.55;}
+.bm-item:hover .bm-folder-svg{opacity:.8;}
+
+.bm-bar-tools{position:relative;display:flex;align-items:center;gap:2px;flex:0 0 auto;padding-left:7px;opacity:0;transition:opacity .15s;}
+.bm-bar-tools::before{content:"";position:absolute;left:0;top:50%;width:1px;height:16px;transform:translateY(-50%);background:rgba(127,127,127,.26);}
 .bm-bar:hover .bm-bar-tools,.bm-bar:focus-within .bm-bar-tools{opacity:1;}
-.bm-tool{width:24px;height:24px;padding:0;border:none;border-radius:6px;background:transparent;color:inherit;font-size:14px;line-height:1;opacity:.6;cursor:pointer;}
-.bm-tool:hover{opacity:1;background:rgba(127,127,127,.18);}
+.bm-tool{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;border:none;border-radius:7px;background:transparent;color:inherit;font-size:14px;line-height:1;opacity:.55;cursor:pointer;transition:background-color .13s ease,opacity .13s ease;}
+.bm-tool:hover{opacity:1;background:rgba(127,127,127,.16);}
 
-.bm-hint,.bm-empty{padding:4px 8px;font-size:12px;opacity:.6;}
+/* Dragging: a caret in the item a drop would land in front of, or behind */
+.bm-dragging{opacity:.45;}
+.bm-drop-end{flex:1 1 auto;min-width:30px;align-self:stretch;border-radius:7px;}
+.bm-drop-before{box-shadow:inset 2px 0 0 0 rgba(87,120,216,.9);box-shadow:inset 2px 0 0 0 <<colour primary>>;}
+.bm-drop-after{box-shadow:inset -2px 0 0 0 rgba(87,120,216,.9);box-shadow:inset -2px 0 0 0 <<colour primary>>;}
+.bm-drop-into{background:rgba(127,127,127,.16);box-shadow:inset 0 0 0 2px rgba(87,120,216,.9);box-shadow:inset 0 0 0 2px <<colour primary>>;}
+.bm-menu .bm-drop-before{box-shadow:inset 0 2px 0 0 rgba(87,120,216,.9);box-shadow:inset 0 2px 0 0 <<colour primary>>;}
+.bm-menu .bm-drop-after{box-shadow:inset 0 -2px 0 0 rgba(87,120,216,.9);box-shadow:inset 0 -2px 0 0 <<colour primary>>;}
 
-.bm-menu{min-width:215px;max-width:340px;max-width:min(340px,calc(100vw - 32px));max-height:62vh;overflow-y:auto;padding:5px;border-radius:9px;background:#fff;background:<<colour dropdown-background>>;color:inherit;color:<<colour foreground>>;border:1px solid rgba(127,127,127,.26);box-shadow:0 12px 30px -12px rgba(0,0,0,.55);}
-.bm-menu .bm-row{display:flex;width:100%;max-width:none;box-sizing:border-box;padding:6px 8px;border-radius:5px;}
+.bm-hint,.bm-empty{padding:5px 9px;font-size:12px;line-height:16px;opacity:.6;}
+
+.bm-menu{min-width:215px;max-width:340px;max-width:min(340px,calc(100vw - 32px));max-height:62vh;overflow-y:auto;padding:6px;border-radius:10px;background:#fff;background:<<colour dropdown-background>>;color:inherit;color:<<colour foreground>>;border:1px solid rgba(127,127,127,.22);box-shadow:0 1px 2px rgba(0,0,0,.12),0 14px 34px -14px rgba(0,0,0,.5);scrollbar-width:thin;}
+.bm-menu::-webkit-scrollbar{width:7px;}
+.bm-menu::-webkit-scrollbar-track{background:transparent;}
+.bm-menu::-webkit-scrollbar-thumb{background:rgba(127,127,127,.3);border-radius:4px;}
+.bm-menu .bm-row{display:flex;width:100%;max-width:none;height:auto;min-height:28px;box-sizing:border-box;padding:5px 8px;border-radius:6px;}
 .bm-sub{display:block;}
-.bm-submenu{margin:1px 0 3px 12px;padding-left:9px;border-left:1px solid rgba(127,127,127,.22);}
-.bm-caret{margin-left:auto;padding-left:8px;opacity:.5;transition:transform .12s ease;}
+.bm-submenu{margin:1px 0 3px 13px;padding-left:10px;border-left:1px solid rgba(127,127,127,.2);}
+.bm-caret{margin-left:auto;padding-left:8px;opacity:.45;transition:transform .12s ease;}
 .bm-caret-open{transform:rotate(90deg);}
 
-.bm-pop{width:306px;max-width:calc(100vw - 32px);padding:12px;border-radius:9px;background:#fff;background:<<colour dropdown-background>>;color:inherit;color:<<colour foreground>>;border:1px solid rgba(127,127,127,.26);box-shadow:0 12px 30px -12px rgba(0,0,0,.55);}
-.bm-pop-head{margin-bottom:9px;font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;opacity:.6;}
+.bm-pop{width:306px;max-width:calc(100vw - 32px);padding:13px;border-radius:10px;background:#fff;background:<<colour dropdown-background>>;color:inherit;color:<<colour foreground>>;border:1px solid rgba(127,127,127,.22);box-shadow:0 1px 2px rgba(0,0,0,.12),0 14px 34px -14px rgba(0,0,0,.5);}
+.bm-pop-head{margin-bottom:10px;font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;opacity:.6;}
 .bm-pop-note{margin:2px 0 9px;font-size:11px;opacity:.6;}
-.bm-pop-actions{display:flex;justify-content:flex-end;gap:7px;margin-top:10px;}
-.bm-field{display:flex;flex-direction:column;gap:3px;margin-bottom:9px;font-size:12px;}
+.bm-pop-actions{display:flex;justify-content:flex-end;gap:7px;margin-top:11px;}
+.bm-field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;font-size:12px;}
 .bm-field-label{opacity:.62;}
 .bm-check{display:flex;align-items:center;gap:6px;}
-.bm-input{width:100%;box-sizing:border-box;padding:5px 8px;border:1px solid rgba(127,127,127,.34);border-radius:5px;background:transparent;color:inherit;font:inherit;font-size:12.5px;}
-.bm-input:focus{outline:none;border-color:#5778d8;border-color:<<colour primary>>;}
-.bm-chip{margin:0 4px 5px 0;padding:2px 8px;border:1px solid rgba(127,127,127,.3);border-radius:11px;background:transparent;color:inherit;font-size:11px;cursor:pointer;}
+.bm-input{width:100%;box-sizing:border-box;padding:6px 9px;border:1px solid rgba(127,127,127,.32);border-radius:6px;background:transparent;color:inherit;font:inherit;font-size:12.5px;transition:border-color .13s ease,box-shadow .13s ease;}
+.bm-input:focus{outline:none;border-color:#5778d8;border-color:<<colour primary>>;box-shadow:0 0 0 2px rgba(87,120,216,.18);}
+.bm-chip{margin:0 4px 5px 0;padding:3px 9px;border:1px solid rgba(127,127,127,.28);border-radius:11px;background:transparent;color:inherit;font-size:11px;cursor:pointer;transition:background-color .13s ease;}
 .bm-chip:hover{background:rgba(127,127,127,.16);}
-.bm-btn{padding:5px 13px;border:1px solid rgba(127,127,127,.34);border-radius:6px;background:transparent;color:inherit;font-size:12.5px;cursor:pointer;}
+.bm-btn{padding:6px 13px;border:1px solid rgba(127,127,127,.32);border-radius:7px;background:transparent;color:inherit;font-size:12.5px;cursor:pointer;transition:background-color .13s ease;}
+.bm-btn:hover{background:rgba(127,127,127,.14);}
 .bm-btn-primary{background:#5778d8;background:<<colour primary>>;border-color:#5778d8;border-color:<<colour primary>>;color:#fff;}
+.bm-btn-primary:hover{filter:brightness(1.08);background:#5778d8;background:<<colour primary>>;}
 .bm-dim{opacity:.55;}
 
 .bm-manager{max-width:900px;}
-.bm-manager .bm-panel{max-width:420px;margin:4px 0 10px;padding:12px;border:1px solid rgba(127,127,127,.22);border-radius:9px;}
+.bm-manager .bm-panel{max-width:420px;margin:4px 0 10px;padding:13px;border:1px solid rgba(127,127,127,.2);border-radius:10px;}
 .bm-mgroup-head{display:flex;align-items:center;gap:7px;margin:22px 0 5px;font-size:12.5px;font-weight:600;}
 .bm-mgroup-name{opacity:.85;}
 .bm-mrow{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid rgba(127,127,127,.14);}
@@ -62,7 +96,7 @@
 .bm-mrow .bm-input{width:auto;}
 .bm-mrow .bm-input-name{flex:1 1 28%;min-width:80px;}
 .bm-mrow .bm-input-url{flex:2 1 44%;min-width:110px;}
-.bm-mfolder{flex:0 0 auto;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:4px 8px;border:1px dashed rgba(127,127,127,.4);border-radius:5px;background:transparent;color:inherit;font-size:11.5px;cursor:pointer;}
+.bm-mfolder{flex:0 0 auto;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:5px 9px;border:1px dashed rgba(127,127,127,.38);border-radius:6px;background:transparent;color:inherit;font-size:11.5px;cursor:pointer;transition:background-color .13s ease;}
 .bm-mfolder:hover{background:rgba(127,127,127,.14);}
 .bm-mbtn{flex:0 0 auto;padding:2px 5px;border:none;border-radius:4px;background:transparent;color:inherit;font-size:12px;line-height:1.2;opacity:.55;cursor:pointer;}
 .bm-mbtn:hover{opacity:1;background:rgba(127,127,127,.18);}
@@ -76,5 +110,5 @@
 }
 
 <$list filter="[[$:/config/bookmarks/labels]get[text]match[no]]" variable="bmnone">.bm-bar-items .bm-label{display:none;}
-.bm-bar-items .bm-item{gap:0;padding:4px 6px;}
+.bm-bar-items .bm-item{gap:0;padding:0 6px;}
 </$list>

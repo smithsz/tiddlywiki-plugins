@@ -2,7 +2,9 @@
 <$vars bmname={{{ [<bmpath>bookmarkname[]] }}}>
 <$list filter="[<bmmode>!match[menu]]" variable="bmnone">
 <$vars bmstate={{{ [[$:/state/bookmarks/pop/]addsuffix<bmpath>] }}}>
+<$bookmark-drag entry=<<bmentry>> folder=<<bmfolder>> axis="x">
 <$button popup=<<bmstate>> class="bm-item bm-folder" tooltip=<<bmpath>>><$transclude tiddler="$:/plugins/claude/bookmarks/templates/folder-icon"/><span class="bm-label"><$text text=<<bmname>>/></span></$button>
+</$bookmark-drag>
 <$reveal type="popup" state=<<bmstate>> position="below" clamp="both" tag="div" class="bm-menu tc-popup-keep">
 <$vars bmfolder=<<bmpath>>><$transclude tiddler="$:/plugins/claude/bookmarks/templates/menu"/></$vars>
 </$reveal>
@@ -11,10 +13,14 @@
 <$list filter="[<bmmode>match[menu]]" variable="bmnone">
 <$vars bmstate={{{ [[$:/state/bookmarks/open/]addsuffix<bmpath>] }}}>
 <$reveal type="nomatch" state=<<bmstate>> text="open" tag="div" class="bm-sub">
+<$bookmark-drag entry=<<bmentry>> folder=<<bmfolder>> axis="y">
 <$button set=<<bmstate>> setTo="open" class="bm-item bm-row bm-folder"><$transclude tiddler="$:/plugins/claude/bookmarks/templates/folder-icon"/><span class="bm-label"><$text text=<<bmname>>/></span><span class="bm-caret">›</span></$button>
+</$bookmark-drag>
 </$reveal>
 <$reveal type="match" state=<<bmstate>> text="open" tag="div" class="bm-sub">
+<$bookmark-drag entry=<<bmentry>> folder=<<bmfolder>> axis="y">
 <$button set=<<bmstate>> setTo="" class="bm-item bm-row bm-folder bm-folder-open"><$transclude tiddler="$:/plugins/claude/bookmarks/templates/folder-icon"/><span class="bm-label"><$text text=<<bmname>>/></span><span class="bm-caret bm-caret-open">›</span></$button>
+</$bookmark-drag>
 <div class="bm-submenu"><$vars bmfolder=<<bmpath>>><$transclude tiddler="$:/plugins/claude/bookmarks/templates/menu"/></$vars></div>
 </$reveal>
 </$vars>

@@ -1,5 +1,6 @@
 \whitespace trim
-<$vars bmurl={{{ [<bmitem>get[url]] }}} bmlabel={{{ [<bmitem>bookmarklabel[]] }}} bmclass={{{ [<bmmode>match[menu]then[bm-item bm-row]else[bm-item]] }}} bmnewtab={{{ [[$:/config/bookmarks/newtab]get[text]match[no]then[_self]else[_blank]] }}}>
+<$vars bmurl={{{ [<bmitem>bookmarkurl[]] }}} bmlabel={{{ [<bmitem>bookmarklabel[]] }}} bmclass={{{ [<bmmode>match[menu]then[bm-item bm-row]else[bm-item]] }}} bmnewtab={{{ [[$:/config/bookmarks/newtab]get[text]match[no]then[_self]else[_blank]] }}} bmaxis={{{ [<bmmode>match[menu]then[y]else[x]] }}}>
+<$bookmark-drag entry=<<bmentry>> folder=<<bmfolder>> axis=<<bmaxis>>>
 <$list filter="[<bmurl>!match[]]" variable="bmhref">
 <a class=<<bmclass>> href=<<bmhref>> target=<<bmnewtab>> rel="noopener noreferrer" title=<<bmhref>>><$transclude tiddler="$:/plugins/claude/bookmarks/templates/icon"/><span class="bm-label"><$text text=<<bmlabel>>/></span></a>
 </$list>
@@ -8,4 +9,5 @@
 <$link to=<<bmtarget>> class=<<bmclass>> tooltip=<<bmtarget>>><$transclude tiddler="$:/plugins/claude/bookmarks/templates/icon"/><span class="bm-label"><$text text=<<bmlabel>>/></span></$link>
 </$vars>
 </$list>
+</$bookmark-drag>
 </$vars>

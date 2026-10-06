@@ -26,6 +26,13 @@ folder, and `Dev/Tools` makes ''Tools'' inside ''Dev''.
 There is also a ☆ button in the tiddler toolbar: it bookmarks the tiddler
 you are reading, and turns into ★ to take it off the bar again.
 
+Or drop something on the bar. Dragging a tiddler onto it — from the story
+river, the sidebar, a search result, anywhere TiddlyWiki lets you pick a
+tiddler up — bookmarks that tiddler, and dragging a link in from another
+browser window bookmarks that link. The bookmark lands where you drop it: a
+caret shows the gap it will fall into, and a folder lit up around the edges
+will swallow it.
+
 !! Folders
 A folder on the bar opens a dropdown when you click it. Folders nested
 inside it expand in place, so you can keep a deep tree without chasing
@@ -33,6 +40,16 @@ submenus sideways. A folder exists only while something is in it — empty it
 and it disappears from the bar.
 
 !! Rearranging
+Drag a bookmark along the bar to move it, onto a folder to put it inside, or
+out of an open folder to bring it back to the bar. Folders can be dragged
+the same way, and carry everything below them along — including into another
+folder, which nests them. Rows inside a dropdown reorder by dragging too.
+Dragging a bookmark the other way, out of the wiki, hands its URL to
+whatever you drop it on.
+
+A folder sits wherever its earliest bookmark sits, so dragging a bookmark
+into a folder can shift the folder itself along the bar.
+
 Press ☰ on the bar for the ''bookmark manager''. Each row there renames a
 bookmark, edits its URL or target, moves it to another folder, or deletes
 it, and the ↑ ↓ buttons set the order on the bar. Folder headings have the
@@ -45,7 +62,8 @@ domains you bookmark are requested from `icons.duckduckgo.com` as the bar
 renders. Under ''Settings'' in the manager you can switch to Google's
 service, fetch `/favicon.ico` from each site directly, or turn favicons off
 entirely — the last option draws a coloured initial instead and asks
-nothing of the network. Tiddler bookmarks always use an initial.
+nothing of the network. Tiddler bookmarks always use an initial, and so does
+any bookmark whose favicon fails to arrive.
 
 !! Settings
 The manager's ''Settings'' section also hides the names on the bar (leaving

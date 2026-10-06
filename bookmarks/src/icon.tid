@@ -1,2 +1,2 @@
 \whitespace trim
-<$vars bmstyle={{{ [<bmitem>bookmarkicon[]] }}} bminitial={{{ [<bmitem>bookmarkinitial[]] }}}><span class="bm-ico" style=<<bmstyle>>><$text text=<<bminitial>>/></span></$vars>
+<$bookmark-icon item=<<bmitem>>/>

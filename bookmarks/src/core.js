@@ -15,6 +15,7 @@ var ITEM_PREFIX = "$:/bookmarks/item/";
 var STEP = 10;
 var MAX_DEPTH = 12;
 var SCHEMES = /^(?:https?|ftp|ftps|file|mailto|tel|sms|irc|ircs|news|nntp|gopher|gemini|ipfs|ipns|magnet):/i;
+var UNSAFE = /^(?:javascript|data|vbscript|blob):/i;
 
 /* "/Dev//Tools/ " -> "Dev/Tools" so a path has exactly one spelling */
 function normFolder(value){
@@ -42,9 +43,19 @@ function bareHost(url){
 	return host(url).replace(/^www\./,"");
 }
 
+/*
+A URL that is safe to put in an href, or "" for one that is not. Browsers
+ignore control characters inside a scheme, so "java\nscript:" runs as
+"javascript:" — strip them before deciding.
+*/
+function safeUrl(value){
+	var s = String(value || "").replace(/[\u0000-\u001f\u007f]/g,"").trim();
+	return UNSAFE.test(s) ? "" : s;
+}
+
 /* Returns a usable URL, or "" when the input looks like a tiddler title */
 function normaliseUrl(value){
-	var s = String(value || "").trim();
+	var s = safeUrl(value);
 	if(!s){ return ""; }
 	if(SCHEMES.test(s) || /^[a-z][a-z0-9+.-]*:\/\//i.test(s)){ return s; }
 	if(s.indexOf("//") === 0){ return "https:" + s; }
@@ -141,6 +152,61 @@ function move(wiki,entry,folder,direction){
 	return true;
 }
 
+/*
+Move one entry of `folder` so that it sits immediately before the entry
+`before` ("" = at the end), then renumber the bar from the new arrangement.
+*/
+function arrange(wiki,entry,folder,before){
+	var list = entries(wiki,folder), from = -1;
+	for(var i = 0; i < list.length; i++){
+		if(encode(list[i]) === entry){ from = i; break; }
+	}
+	if(from === -1){ return false; }
+	var moved = list.splice(from,1)[0], to = -1;
+	if(before){
+		for(var j = 0; j < list.length; j++){
+			if(encode(list[j]) === before){ to = j; break; }
+		}
+	}
+	list.splice(to === -1 ? list.length : to,0,moved);
+	renumber(wiki,flatten(wiki,"",{folder:folder,entries:list},[],0));
+	return true;
+}
+
+/* Re-parent a folder, then order it among its new siblings */
+function placeFolder(wiki,path,folder,before){
+	path = normFolder(path);
+	if(!path){ return false; }
+	/* A folder cannot be dropped inside itself */
+	if(folder === path || folder.substr(0,path.length + 1) === path + "/"){ return false; }
+	var entry = "f:" + path;
+	if(folder !== parent(path)){
+		var to = folder ? folder + "/" + name(path) : name(path);
+		if(!rename(wiki,path,to)){ return false; }
+		entry = "f:" + normFolder(to);
+	}
+	return arrange(wiki,entry,folder,before);
+}
+
+/*
+Drop `entry` ("i:<title>" or "f:<path>") into `folder`, landing immediately
+before the entry `before` ("" = at the end). Bookmarks change folder, and a
+folder carries everything below it along.
+*/
+function place(wiki,entry,folder,before){
+	folder = normFolder(folder);
+	if(!entry || entry === before){ return false; }
+	var key = entry.substr(2);
+	if(entry.substr(0,2) === "f:"){ return placeFolder(wiki,key,folder,before); }
+	if(entry.substr(0,2) !== "i:"){ return false; }
+	var tiddler = wiki.getTiddler(key);
+	if(!tiddler){ return false; }
+	if(normFolder(tiddler.fields.folder) !== folder){
+		wiki.addTiddler(new $tw.Tiddler(tiddler,{folder:folder},wiki.getModificationFields()));
+	}
+	return arrange(wiki,entry,folder,before);
+}
+
 function folders(wiki,folder,acc,depth){
 	if(depth > MAX_DEPTH){ return acc; }
 	entries(wiki,folder).forEach(function(entry){
@@ -201,6 +267,16 @@ function add(wiki,options){
 	return title;
 }
 
+/* Add a bookmark at a given spot on the bar, rather than at the end */
+function insert(wiki,options,folder,before){
+	var fields = {}, field;
+	for(field in options){ fields[field] = options[field]; }
+	fields.folder = folder;
+	var title = add(wiki,fields);
+	if(title){ arrange(wiki,"i:" + title,normFolder(folder),before); }
+	return title;
+}
+
 /* Rename or re-parent a folder, carrying everything below it along */
 function rename(wiki,from,to){
 	from = normFolder(from);
@@ -249,18 +325,24 @@ function hue(value){
 	return n;
 }
 
-/* One inline style for the 16px square: a favicon, or a coloured initial */
-function iconStyle(wiki,title){
+/* The favicon for a bookmark, or "" when it has none to show */
+function iconSrc(wiki,title){
 	var tiddler = wiki.getTiddler(title);
-	var src = tiddler ? favicon(wiki,tiddler.fields.url) : "";
-	if(src){ return "background-image:url(" + src + ")"; }
+	return tiddler ? favicon(wiki,tiddler.fields.url) : "";
+}
+
+/*
+The hashed backdrop for the 16px square. It is drawn whether or not there is
+a favicon, so a favicon that 404s leaves a coloured initial rather than a
+hole; the icon widget clears it once the image has actually loaded.
+*/
+function chipStyle(wiki,title){
+	var tiddler = wiki.getTiddler(title);
 	var seed = tiddler ? (host(tiddler.fields.url) || String(tiddler.fields.target || "") || label(wiki,title)) : title;
 	return "background:hsl(" + hue(seed) + ",46%,42%)";
 }
 
 function initial(wiki,title){
-	var tiddler = wiki.getTiddler(title);
-	if(tiddler && favicon(wiki,tiddler.fields.url)){ return ""; }
 	var text = label(wiki,title).replace(/^[\s"'(\[{<‘“]+/,"");
 	return (text.charAt(0) || "•").toUpperCase();
 }
@@ -278,16 +360,21 @@ function parent(path){
 
 exports.ITEM_TAG = ITEM_TAG;
 exports.normFolder = normFolder;
+exports.normaliseUrl = normaliseUrl;
 exports.entries = entries;
 exports.encode = encode;
 exports.folders = folders;
 exports.label = label;
-exports.iconStyle = iconStyle;
+exports.iconSrc = iconSrc;
+exports.chipStyle = chipStyle;
 exports.initial = initial;
 exports.name = name;
 exports.parent = parent;
 exports.host = host;
+exports.safeUrl = safeUrl;
 exports.move = move;
+exports.place = place;
+exports.insert = insert;
 exports.add = add;
 exports.rename = rename;
 exports.setFolder = setFolder;

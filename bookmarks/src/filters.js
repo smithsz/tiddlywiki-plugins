@@ -29,9 +29,12 @@ exports.bookmarkfolders = function(source,operator,options){
 };
 
 exports.bookmarklabel = mapped(core.label);
-exports.bookmarkicon = mapped(core.iconStyle);
-exports.bookmarkinitial = mapped(core.initial);
-exports.bookmarkhost = mapped(function(wiki,title){ return core.host(title); });
+
+/* A bookmark's URL, emptied out when it is not safe to put in an href */
+exports.bookmarkurl = mapped(function(wiki,title){
+	var tiddler = wiki.getTiddler(title);
+	return tiddler ? core.safeUrl(tiddler.fields.url) : "";
+});
 
 exports.bookmarkname = function(source,operator,options){
 	var results = [];
