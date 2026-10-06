@@ -1,0 +1,15 @@
+\whitespace trim
+<div class="bm-bar">
+<div class="bm-bar-items">
+<$list filter="[bookmarkentries[]]" variable="bmentry" emptyMessage="<span class='bm-hint'>No bookmarks yet — press + to add one.</span>">
+<$vars bmmode="bar" bmfolder=""><$transclude tiddler="$:/plugins/claude/bookmarks/templates/entry"/></$vars>
+</$list>
+</div>
+<div class="bm-bar-tools">
+<$button popup="$:/state/bookmarks/add" class="bm-tool" tooltip="Add a bookmark" aria-label="Add a bookmark">+</$button>
+<$button to="$:/plugins/claude/bookmarks/manager" class="bm-tool" tooltip="Manage bookmarks" aria-label="Manage bookmarks">☰</$button>
+</div>
+<$reveal type="popup" state="$:/state/bookmarks/add" position="belowright" tag="div" class="bm-pop tc-popup-keep">
+<$transclude tiddler="$:/plugins/claude/bookmarks/templates/add-form"/>
+</$reveal>
+</div>

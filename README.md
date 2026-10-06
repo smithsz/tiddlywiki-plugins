@@ -4,6 +4,20 @@ A collection of [TiddlyWiki](https://tiddlywiki.com/) plugins.
 
 ## Plugins
 
+### [bookmarks](bookmarks/bookmarks.json)
+
+A browser-style bookmark bar: a narrow strip of favicon-and-name links with
+folders that drop open underneath, a ☆ toolbar button for bookmarking the
+tiddler you are reading, and a manager tiddler for reordering and renaming.
+Bookmarks can point at a URL or at another tiddler.
+
+Install by dragging `bookmarks.json` into a TiddlyWiki, or importing it. Then
+open the *Bookmarks* tiddler, or add it to *$:/DefaultTiddlers*.
+
+- `bookmarks/src/` — the plugin source, one file per tiddler
+- `bookmarks/build.py` — assembles `src/` into `bookmarks.json`; run
+  `python3 build.py` inside `bookmarks/` after editing a source file
+
 ### [momentum](momentum/momentum.json)
 
 A Momentum-style start page: a full-bleed daily photo, live clock, greeting,

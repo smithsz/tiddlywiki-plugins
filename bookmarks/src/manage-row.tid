@@ -1,0 +1,19 @@
+\whitespace trim
+<$vars bmentry={{{ [[i:]addsuffix<bmitem>] }}} bmmove={{{ [[$:/state/bookmarks/move/]addsuffix<bmitem>] }}} bmurl={{{ [<bmitem>get[url]] }}} bmcur={{{ [<bmitem>get[folder]] }}}>
+<div class="bm-mrow">
+<span class="bm-mmove"><$button class="bm-mbtn" tooltip="Move up"><$action-bookmarkmove entry=<<bmentry>> folder=<<bmfolder>> direction="up"/>↑</$button><$button class="bm-mbtn" tooltip="Move down"><$action-bookmarkmove entry=<<bmentry>> folder=<<bmfolder>> direction="down"/>↓</$button></span>
+<$transclude tiddler="$:/plugins/claude/bookmarks/templates/icon"/>
+<$edit-text tiddler=<<bmitem>> field="caption" tag="input" default="" class="bm-input bm-input-name" placeholder="name"/>
+<$list filter="[<bmurl>!match[]]" variable="bmnone"><$edit-text tiddler=<<bmitem>> field="url" tag="input" default="" class="bm-input bm-input-url" placeholder="https://"/></$list>
+<$list filter="[<bmurl>match[]]" variable="bmnone"><$edit-text tiddler=<<bmitem>> field="target" tag="input" default="" class="bm-input bm-input-url" placeholder="tiddler title"/></$list>
+<$button popup=<<bmmove>> class="bm-mfolder" tooltip="Move to a folder"><$action-setfield $tiddler="$:/temp/bookmarks/move-to" text=<<bmcur>>/><$list filter="[<bmcur>!match[]]" variable="bmf"><$text text=<<bmf>>/></$list><$list filter="[<bmcur>match[]]" variable="bmf"><span class="bm-dim">on the bar</span></$list></$button>
+<$button class="bm-mbtn bm-mdel" tooltip="Delete this bookmark"><$action-deletetiddler $tiddler=<<bmitem>>/>✕</$button>
+</div>
+<$reveal type="popup" state=<<bmmove>> position="belowleft" tag="div" class="bm-pop tc-popup-keep">
+<div class="bm-pop-head">Folder</div>
+<div class="bm-field"><$edit-text tiddler="$:/temp/bookmarks/move-to" tag="input" default="" class="bm-input" placeholder="blank = on the bar"/></div>
+<$list filter="[bookmarkfolders[]]" variable="bmf"><$button class="bm-chip" tooltip="Use this folder"><$action-setfield $tiddler="$:/temp/bookmarks/move-to" text=<<bmf>>/><$text text=<<bmf>>/></$button></$list>
+<div class="bm-pop-note">Use / to nest, for example Dev/Tools.</div>
+<div class="bm-pop-actions"><$button class="bm-btn bm-btn-primary">Save<$action-bookmarkfolder item=<<bmitem>> folder={{$:/temp/bookmarks/move-to}}/><$action-deletetiddler $tiddler=<<bmmove>>/></$button></div>
+</$reveal>
+</$vars>

@@ -1,0 +1,59 @@
+! Bookmarks
+
+A bookmark bar for TiddlyWiki, in the shape of a browser's: a thin strip of
+favicon-and-name links, with folders that drop open underneath them.
+
+!! Open it
+Open the ''Bookmarks'' tiddler (type it in the search box and click it). It
+is designed to sit at the top of your wiki, so add `Bookmarks` to
+''$:/DefaultTiddlers'' above whatever else you open there.
+
+To keep it in view above the story river instead, tag
+''$:/plugins/claude/bookmarks/bar'' with `$:/tags/AboveStory`.
+
+!! Adding bookmarks
+Hover the bar and press `+` on the right. Give it:
+
+* a ''URL or tiddler'' — `example.com`, `https://example.com/path` or the
+title of a tiddler in this wiki. A bare domain gains `https://`; anything
+that is not a URL is treated as a tiddler title, so the bookmark opens that
+tiddler instead of a web page.
+* a ''name'' — optional. Left blank, a web link is named after its domain and
+a tiddler link after the tiddler.
+* a ''folder'' — blank puts it straight on the bar. Any other value makes a
+folder, and `Dev/Tools` makes ''Tools'' inside ''Dev''.
+
+There is also a ☆ button in the tiddler toolbar: it bookmarks the tiddler
+you are reading, and turns into ★ to take it off the bar again.
+
+!! Folders
+A folder on the bar opens a dropdown when you click it. Folders nested
+inside it expand in place, so you can keep a deep tree without chasing
+submenus sideways. A folder exists only while something is in it — empty it
+and it disappears from the bar.
+
+!! Rearranging
+Press ☰ on the bar for the ''bookmark manager''. Each row there renames a
+bookmark, edits its URL or target, moves it to another folder, or deletes
+it, and the ↑ ↓ buttons set the order on the bar. Folder headings have the
+same arrows, plus ✎ to rename a folder or re-parent it by typing a new
+path — blank empties the folder out onto the bar.
+
+!! Icons
+Favicons come from DuckDuckGo's icon service by default, which means the
+domains you bookmark are requested from `icons.duckduckgo.com` as the bar
+renders. Under ''Settings'' in the manager you can switch to Google's
+service, fetch `/favicon.ico` from each site directly, or turn favicons off
+entirely — the last option draws a coloured initial instead and asks
+nothing of the network. Tiddler bookmarks always use an initial.
+
+!! Settings
+The manager's ''Settings'' section also hides the names on the bar (leaving
+an icon-only strip, names intact inside folders) and chooses whether web
+links open in a new tab.
+
+!! Where the bookmarks live
+Each bookmark is a tiddler tagged `$:/bookmarks/item`, with `caption`,
+`url` or `target`, `folder` and `order` fields. They are system tiddlers, so
+they stay out of your searches and sidebar lists, and they travel with the
+wiki rather than with this plugin.

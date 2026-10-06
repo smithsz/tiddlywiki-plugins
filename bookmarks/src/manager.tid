@@ -1,0 +1,39 @@
+\whitespace trim
+<div class="bm-manager">
+
+<div class="bm-panel"><$transclude tiddler="$:/plugins/claude/bookmarks/templates/add-form"/></div>
+
+<div class="bm-mgroup-head"><span class="bm-mgroup-name">On the bar</span></div>
+<$list filter="[bookmarkentries[]prefix[i:]removeprefix[i:]]" variable="bmitem" emptyMessage="<div class='bm-empty'>No bookmarks directly on the bar.</div>">
+<$vars bmfolder=""><$transclude tiddler="$:/plugins/claude/bookmarks/templates/manage-row"/></$vars>
+</$list>
+
+<$list filter="[bookmarkfolders[]]" variable="bmf">
+<$vars bmstate={{{ [[$:/state/bookmarks/rename/]addsuffix<bmf>] }}}>
+<div class="bm-mgroup-head">
+<$transclude tiddler="$:/plugins/claude/bookmarks/templates/folder-icon"/><span class="bm-mgroup-name"><$text text=<<bmf>>/></span>
+<$button class="bm-mbtn" tooltip="Move this folder up"><$action-bookmarkmove entry={{{ [[f:]addsuffix<bmf>] }}} folder={{{ [<bmf>bookmarkparent[]] }}} direction="up"/>↑</$button>
+<$button class="bm-mbtn" tooltip="Move this folder down"><$action-bookmarkmove entry={{{ [[f:]addsuffix<bmf>] }}} folder={{{ [<bmf>bookmarkparent[]] }}} direction="down"/>↓</$button>
+<$button popup=<<bmstate>> class="bm-mbtn" tooltip="Rename or move this folder"><$action-setfield $tiddler="$:/temp/bookmarks/rename-to" text=<<bmf>>/>✎</$button>
+</div>
+<$reveal type="popup" state=<<bmstate>> position="belowleft" tag="div" class="bm-pop tc-popup-keep">
+<div class="bm-pop-head">Folder path</div>
+<div class="bm-field"><$edit-text tiddler="$:/temp/bookmarks/rename-to" tag="input" default="" class="bm-input" placeholder="Dev/Tools"/></div>
+<div class="bm-pop-note">Use / to nest. Leave it blank to empty the folder out onto the bar.</div>
+<div class="bm-pop-actions"><$button class="bm-btn bm-btn-primary">Save<$action-bookmarkrename folder=<<bmf>> to={{$:/temp/bookmarks/rename-to}}/><$action-deletetiddler $tiddler=<<bmstate>>/></$button></div>
+</$reveal>
+<$list filter="[bookmarkentries<bmf>prefix[i:]removeprefix[i:]]" variable="bmitem" emptyMessage="<div class='bm-empty'>Only subfolders in here.</div>">
+<$vars bmfolder=<<bmf>>><$transclude tiddler="$:/plugins/claude/bookmarks/templates/manage-row"/></$vars>
+</$list>
+</$vars>
+</$list>
+
+<div class="bm-mgroup-head"><span class="bm-mgroup-name">Settings</span></div>
+<div class="bm-panel">
+<div class="bm-field"><span class="bm-field-label">Icons</span><$select tiddler="$:/config/bookmarks/favicons" default="duckduckgo"><option value="duckduckgo">Favicons via DuckDuckGo</option><option value="google">Favicons via Google</option><option value="direct">Favicons from each site</option><option value="off">No favicons, coloured initials</option></$select></div>
+<div class="bm-field"><label class="bm-check"><$checkbox tiddler="$:/config/bookmarks/labels" field="text" checked="yes" unchecked="no" default="yes"/> Show names on the bar</label></div>
+<div class="bm-field"><label class="bm-check"><$checkbox tiddler="$:/config/bookmarks/newtab" field="text" checked="yes" unchecked="no" default="yes"/> Open web links in a new tab</label></div>
+<div class="bm-pop-note">The bar itself lives in <$link to="Bookmarks">Bookmarks</$link>.</div>
+</div>
+
+</div>

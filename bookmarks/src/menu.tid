@@ -1,0 +1,4 @@
+\whitespace trim
+<$list filter="[bookmarkentries<bmfolder>]" variable="bmentry" emptyMessage="<div class='bm-empty'>Empty folder</div>">
+<$vars bmmode="menu"><$transclude tiddler="$:/plugins/claude/bookmarks/templates/entry"/></$vars>
+</$list>

@@ -1,0 +1,17 @@
+\whitespace trim
+<$vars bmexisting={{{ [tag[$:/bookmarks/item]field:target<currentTiddler>first[]] }}}>
+<$list filter="[<bmexisting>match[]]" variable="bmnone">
+<$button tooltip="Add this tiddler to the bookmark bar" aria-label="Bookmark" class=<<tv-config-toolbar-class>>>
+<$action-bookmarkadd target=<<currentTiddler>>/>
+<$list filter="[<tv-config-toolbar-icons>match[yes]]" variable="bmnone"><span class="bm-star">☆</span></$list>
+<$list filter="[<tv-config-toolbar-text>match[yes]]" variable="bmnone"><span class="tc-btn-text">Bookmark</span></$list>
+</$button>
+</$list>
+<$list filter="[<bmexisting>!match[]]" variable="bmnone">
+<$button tooltip="Remove this tiddler from the bookmark bar" aria-label="Bookmarked" class=<<tv-config-toolbar-class>>>
+<$action-deletetiddler $tiddler=<<bmexisting>>/>
+<$list filter="[<tv-config-toolbar-icons>match[yes]]" variable="bmnone"><span class="bm-star bm-star-on">★</span></$list>
+<$list filter="[<tv-config-toolbar-text>match[yes]]" variable="bmnone"><span class="tc-btn-text">Bookmarked</span></$list>
+</$button>
+</$list>
+</$vars>

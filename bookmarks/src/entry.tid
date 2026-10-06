@@ -1,0 +1,7 @@
+\whitespace trim
+<$list filter="[<bmentry>prefix[i:]]" variable="bmraw">
+<$vars bmitem={{{ [<bmraw>removeprefix[i:]] }}}><$transclude tiddler="$:/plugins/claude/bookmarks/templates/item"/></$vars>
+</$list>
+<$list filter="[<bmentry>prefix[f:]]" variable="bmraw">
+<$vars bmpath={{{ [<bmraw>removeprefix[f:]] }}}><$transclude tiddler="$:/plugins/claude/bookmarks/templates/folder"/></$vars>
+</$list>

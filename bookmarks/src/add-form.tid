@@ -1,0 +1,12 @@
+\whitespace trim
+\define bm-add-actions()
+<$action-bookmarkadd label={{$:/temp/bookmarks/new-label}} url={{$:/temp/bookmarks/new-url}} folder={{$:/temp/bookmarks/new-folder}}/><$action-setfield $tiddler="$:/temp/bookmarks/new-label" text=""/><$action-setfield $tiddler="$:/temp/bookmarks/new-url" text=""/><$action-deletetiddler $tiddler="$:/state/bookmarks/add"/>
+\end
+<div class="bm-pop-head">New bookmark</div>
+<$keyboard key="enter" tag="div" class="bm-form" actions=<<bm-add-actions>>>
+<div class="bm-field"><span class="bm-field-label">URL or tiddler</span><$edit-text tiddler="$:/temp/bookmarks/new-url" tag="input" default="" class="bm-input" placeholder="example.com, or a tiddler title"/></div>
+<div class="bm-field"><span class="bm-field-label">Name</span><$edit-text tiddler="$:/temp/bookmarks/new-label" tag="input" default="" class="bm-input" placeholder="optional"/></div>
+<div class="bm-field"><span class="bm-field-label">Folder</span><$edit-text tiddler="$:/temp/bookmarks/new-folder" tag="input" default="" class="bm-input" placeholder="blank = straight on the bar"/></div>
+<$list filter="[bookmarkfolders[]]" variable="bmf"><$button class="bm-chip" tooltip="Use this folder"><$action-setfield $tiddler="$:/temp/bookmarks/new-folder" text=<<bmf>>/><$text text=<<bmf>>/></$button></$list>
+<div class="bm-pop-actions"><$button class="bm-btn bm-btn-primary" actions=<<bm-add-actions>>>Add</$button></div>
+</$keyboard>
