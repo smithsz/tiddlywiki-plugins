@@ -1,0 +1,28 @@
+\whitespace trim
+<$vars tknow={{$:/temp/tasks/now}} tksettings="$:/state/tasks/settings">
+<div class="tk-board">
+<div class="tk-tagbar">
+<$button class={{{ [[$:/config/tasks/tag]get[text]match[]then[tk-tagchip tk-tagchip-on]else[tk-tagchip]] }}} tooltip="Every task in the wiki"><$action-setfield $tiddler="$:/config/tasks/tag" text=""/>All</$button>
+<$list filter="[tasktags[]]" variable="tkt">
+<$button class={{{ [[$:/config/tasks/tag]get[text]match<tkt>then[tk-tagchip tk-tagchip-on]else[tk-tagchip]] }}} tooltip={{{ [<tkt>addprefix[Tasks tagged ]] }}}>
+<$action-setfield $tiddler="$:/config/tasks/tag" text=<<tkt>>/>
+<$text text=<<tkt>>/>
+<span class="tk-tagchip-count"><$count filter="[taskscope<tkt>taskselect[open],<tknow>]"/></span>
+</$button>
+</$list>
+<span class="tk-tagbar-tools"><$button popup=<<tksettings>> class="tk-tool" tooltip="Settings" aria-label="Settings">⚙</$button></span>
+</div>
+<$reveal type="popup" state=<<tksettings>> position="belowleft" clamp="both" tag="div" class="tk-pop tc-popup-keep">
+<div class="tk-pop-head">Settings</div>
+<div class="tk-field"><span class="tk-field-label">Default time of day for a new due date</span><$edit-text tiddler="$:/config/tasks/defaulttime" tag="input" type="time" default="23:59" class="tk-input tk-input-time"/></div>
+<div class="tk-field"><label class="tk-check-line"><$checkbox tiddler="$:/config/tasks/inline" field="text" checked="yes" unchecked="no" default="yes"/> <span>Show the task list on a tag's own tiddler</span></label></div>
+<div class="tk-field"><label class="tk-check-line"><$checkbox tiddler="$:/config/tasks/pagebadge" field="text" checked="yes" unchecked="no" default="yes"/> <span>Show an overdue count in the sidebar</span></label></div>
+<div class="tk-field"><span class="tk-field-label">Overdue colour</span><$edit-text tiddler="$:/config/tasks/overduecolour" tag="input" default="" class="tk-input" placeholder="blank = pick one automatically"/></div>
+<div class="tk-pop-note">Set a colour here if overdue tasks are hard to read — the automatic choice follows your system's light/dark setting, which cannot see a palette you picked by hand.</div>
+<div class="tk-pop-note">Each task keeps its own due date in a due field, so your tasks travel with the wiki rather than with this plugin.</div>
+</$reveal>
+<$vars taskTag={{$:/config/tasks/tag}}>
+<$transclude tiddler="$:/plugins/claude/tasks/templates/view"/>
+</$vars>
+</div>
+</$vars>

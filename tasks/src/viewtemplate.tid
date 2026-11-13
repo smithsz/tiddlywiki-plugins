@@ -1,0 +1,10 @@
+\whitespace trim
+<$list filter="[[$:/config/tasks/inline]get[text]!match[no]]" variable="tknone">
+<$list filter="[<currentTiddler>!is[system]]" variable="tknone">
+<$list filter="[tag<currentTiddler>!is[system]has[due]limit[1]]" variable="tknone">
+<$vars taskTag=<<currentTiddler>>>
+<div class="tk-inline"><$transclude tiddler="$:/plugins/claude/tasks/templates/view"/></div>
+</$vars>
+</$list>
+</$list>
+</$list>

@@ -1,0 +1,42 @@
+\whitespace trim
+<$vars tknow={{$:/temp/tasks/now}} tkadd="$:/state/tasks/add">
+<div class="tk-view">
+<div class="tk-view-head">
+<span class="tk-view-title"><$text text={{{ [<taskTag>!match[]] ~[[All tasks]] }}}/></span>
+<$list filter="[taskscope<taskTag>taskselect[overdue],<tknow>count[]!match[0]]" variable="tkoverdue"><span class="tk-badge tk-badge-overdue"><$text text=<<tkoverdue>>/>&#32;overdue</span></$list>
+<span class="tk-badge"><$count filter="[taskscope<taskTag>taskselect[open],<tknow>]"/>&#32;open</span>
+<span class="tk-view-tools">
+<$button popup=<<tkadd>> class="tk-tool tk-tool-add" tooltip="Add a task" aria-label="Add a task">
+<$action-setfield $tiddler="$:/temp/tasks/new-tag" text=<<taskTag>>/>
+<$action-setfield $tiddler="$:/temp/tasks/new-date" text=<<now "YYYY-0MM-0DD">>/>
++</$button>
+</span>
+</div>
+<$reveal type="popup" state=<<tkadd>> position="belowleft" clamp="both" tag="div" class="tk-pop tc-popup-keep">
+<$transclude tiddler="$:/plugins/claude/tasks/templates/add-form"/>
+</$reveal>
+<$list filter="[[overdue]] [[today]] [[tomorrow]] [[soon]] [[later]] [[someday]]" variable="tkbucket">
+<$transclude tiddler="$:/plugins/claude/tasks/templates/group"/>
+</$list>
+<$list filter="[taskscope<taskTag>taskselect[all],<tknow>count[]match[0]]" variable="tknone">
+<div class="tk-empty">Nothing here yet — press + to add a task.</div>
+</$list>
+<$list filter="[taskscope<taskTag>taskselect[all],<tknow>count[]!match[0]]" variable="tknone">
+<$list filter="[taskscope<taskTag>taskselect[open],<tknow>count[]match[0]]" variable="tknone">
+<div class="tk-empty">Nothing outstanding.</div>
+</$list>
+</$list>
+<$list filter="[taskscope<taskTag>taskselect[deferred],<tknow>count[]!match[0]]" variable="tkdeferred">
+<div class="tk-done-line"><label class="tk-check-line"><$checkbox tiddler="$:/config/tasks/showdeferred" field="text" checked="yes" unchecked="no" default="no"/> <span>Show not started yet (<$text text=<<tkdeferred>>/>)</span></label></div>
+<$list filter="[[$:/config/tasks/showdeferred]get[text]match[yes]]" variable="tknone">
+<$vars tkbucket="deferred"><$transclude tiddler="$:/plugins/claude/tasks/templates/group"/></$vars>
+</$list>
+</$list>
+<$list filter="[taskscope<taskTag>taskselect[done],<tknow>count[]!match[0]]" variable="tkdone">
+<div class="tk-done-line"><label class="tk-check-line"><$checkbox tiddler="$:/config/tasks/showdone" field="text" checked="yes" unchecked="no" default="no"/> <span>Show done (<$text text=<<tkdone>>/>)</span></label></div>
+<$list filter="[[$:/config/tasks/showdone]get[text]match[yes]]" variable="tknone">
+<$vars tkbucket="done"><$transclude tiddler="$:/plugins/claude/tasks/templates/group"/></$vars>
+</$list>
+</$list>
+</div>
+</$vars>

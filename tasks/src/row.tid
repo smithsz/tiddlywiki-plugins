@@ -1,0 +1,31 @@
+\whitespace trim
+<$vars tkbucket={{{ [<tktask>taskbucket<tknow>] }}} tkpop={{{ [[$:/state/tasks/due/]addsuffix<tktask>] }}} tkrepeat={{{ [<tktask>taskrepeat[]] }}} tkprio={{{ [<tktask>taskpriority[]] }}}>
+<div class={{{ [<tkbucket>addprefix[tk-row tk-]] [<tkprio>!match[]addprefix[tk-prio-]] +[join[ ]] }}}>
+<$vars tkcheck={{{ [<tkbucket>match[done]then[Put this back on the list]] ~[<tkrepeat>!match[]then[Done for now, and round it comes again]] ~[[Mark as done]] }}}>
+<$button class="tk-check" tooltip=<<tkcheck>> aria-label=<<tkcheck>>>
+<$action-taskdone task=<<tktask>>/>
+<span class="tk-box">✓</span>
+</$button>
+</$vars>
+<div class="tk-body">
+<$list filter="[<tkprio>!match[]]" variable="tknone"><span class="tk-flag" title={{{ [<tkprio>addprefix[Priority: ]] }}}>●</span></$list>
+<$link to=<<tktask>> class="tk-title"><$text text={{{ [<tktask>taskcaption[]] }}}/></$link>
+<div class="tk-meta">
+<$list filter="[<tktask>taskduetext[]!match[]]" variable="tkwhen"><span class="tk-due"><$text text=<<tkwhen>>/></span></$list>
+<$list filter="[<tkbucket>!match[done]]" variable="tknone"><$list filter="[<tktask>taskrelative<tknow>!match[]]" variable="tkrel"><span class="tk-rel"><$text text=<<tkrel>>/></span></$list></$list>
+<$list filter="[<tkrepeat>!match[]]" variable="tknone"><span class="tk-repeat" title="This task comes round again">↻&#32;<$text text=<<tkrepeat>>/></span></$list>
+<$list filter="[<tkbucket>match[deferred]]" variable="tknone"><span class="tk-start">starts&#32;<$text text={{{ [<tktask>taskstarttext[]] }}}/></span></$list>
+<$list filter="[<tktask>tags[]!is[system]] -[<taskTag>]" variable="tktag"><$link to=<<tktag>> class="tk-tag"><$text text=<<tktag>>/></$link></$list>
+</div>
+</div>
+<$list filter="[<tkbucket>!match[done]]" variable="tknone">
+<div class="tk-row-tools">
+<$button class="tk-tool" tooltip="Push this back by a day" aria-label="Push back a day"><$action-taskdue task=<<tktask>> shift="1"/>+1d</$button>
+<$button popup=<<tkpop>> class="tk-tool" tooltip="Change the due date, how it repeats, or its priority" aria-label="Change the due date">◴</$button>
+</div>
+</$list>
+<$reveal type="popup" state=<<tkpop>> position="belowleft" clamp="both" tag="div" class="tk-pop tc-popup-keep">
+<$transclude tiddler="$:/plugins/claude/tasks/templates/due-popup"/>
+</$reveal>
+</div>
+</$vars>

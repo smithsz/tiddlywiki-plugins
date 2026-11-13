@@ -1,0 +1,123 @@
+! Tasks
+
+Due dates for your tiddlers, and a list per tag that shows what is coming
+up and what has already slipped past.
+
+!! The idea
+A task is an ordinary tiddler with a ''due date''. Tag your tasks with
+whatever groups them — a subject, a project, a client, a room of the house —
+and each of those tags gets a list, in date order, with anything overdue in
+red. The plugin brings no tags of its own: a list exists for any tag you
+have used, and stops existing when you stop using it.
+
+Nothing is kept in a hidden store: the due date is a `due` field on the
+tiddler itself, so your tasks are your tiddlers and they travel with the
+wiki rather than with this plugin.
+
+!! Giving a tiddler a due date
+Open it and press ''◴'' in the tiddler toolbar. Pick a date, and a time if
+the hour matters — a date on its own falls due at the end of that day, so
+something due "on the 25th" stays on time until the 25th is over. ''Today'',
+''Tomorrow'' and ''Next week'' are there for the common cases, and
+''Unschedule'' takes the date off again.
+
+Or type the date in words, in the box under the picker: `fri`, `tomorrow`,
+`+3d`, `in 2 weeks`, `25 nov`, `25/11`, `next monday`. Add a time on the end
+if you want one — `fri 9am`, `tomorrow 14:30`. A day or month that has
+already gone by is read as next year's.
+
+You can also type a date straight into the `due` field. It is stored the way
+TiddlyWiki stores `created` and `modified` — `20261125235959999`, a UTC
+stamp — but `2026-11-25` and `2026-11-25T09:30` are understood too and get
+tidied into that form the next time the task is edited through the plugin.
+
+!! The task list
+Open the ''Tasks'' tiddler for every task in the wiki, and press a tag along
+the top to narrow it to that tag. Tasks are ordered by due date throughout,
+grouped under ''Overdue'', ''Today'', ''Tomorrow'', ''This week'', ''Later''
+and ''No due date''.
+
+* ''Overdue'' tasks are red, and the heading tells you how many there are.
+* The tick box on the left marks a task done.
+* ''+1d'' pushes a task back a day. On a task that is already overdue it
+means tomorrow, not another day in the past.
+* ''◴'' on a row changes the date.
+* ''+'' adds a task. Give it a title, a tag and a date; a title that is
+already in the wiki keeps whatever it says and simply gains the tag and the
+date.
+
+Tagged tiddlers with no due date gather under ''No due date'' — somewhere
+for the things you have noted down but not yet scheduled.
+
+!! Repeats
+Under ''Repeats'' in the same popup: ''Daily'', ''Weekly'',
+''Fortnightly'', ''Monthly'', ''Yearly'', or type your own — `every 3 days`,
+`every 2 weeks`.
+
+Ticking off a recurring task moves it to its next turn instead of finishing
+it, so it never leaves the list. One left alone for a month skips to the
+next date still to come rather than to another one already past, and a
+monthly task due on the 31st falls on the end of February rather than
+sliding into March. There is no undo: if you tick one by mistake, set the
+date again in the popup.
+
+The day of the week is not part of the grammar because it does not need to
+be — a weekly task due on a Monday already comes round on Mondays.
+
+!! Priority
+''High'', ''Medium'' or ''Low'', shown as a dot before the title. Two tasks
+due the same day are ordered by priority, so the urgent one is on top. It
+only breaks ties: a low-priority task due today still comes before an
+urgent one due next week.
+
+!! Not before
+A ''start'' date keeps a task out of the way until the day arrives. Until
+then it sits under ''Not started yet'', folded away at the foot of the list,
+and it is not counted as overdue however long its due date has been and
+gone. Useful for the thing you cannot begin until something else happens.
+
+!! Clearing a backlog
+The ''Overdue'' heading has a ''push to today'' button, which moves
+everything overdue to the end of today in one go.
+
+!! Knowing without looking
+The sidebar carries a count of everything overdue, across every tag, and
+clicking it opens the task list. Turn it off under ''⚙''.
+
+!! The list on a tag's own tiddler
+Open the tiddler for one of your tags and the same list appears under its
+text, so a tag tiddler doubles as the view for it. Turn that off under ''⚙''
+on the Tasks tiddler.
+
+!! Putting a list anywhere
+`<<tasks YourTag>>` drops the list for a tag into any tiddler, so a daily
+note or a project tiddler can carry its own.
+
+!! Done
+Finishing a task writes the time to a `done` field and moves it to the
+''Done'' list at the foot of the view, hidden until you ask for it. Tick the
+box again to put it back.
+
+!! Fields
+Everything lives in fields on the task itself:
+
+* `due` — when it is due, as a 17 digit stamp. No field, or an empty one,
+means unscheduled.
+* `done` — when it was finished. Absent or empty means it is still open.
+* `repeat` — how often it comes round: `daily`, `weekly`, `every 3 days`.
+Anything unreadable is pointed out in the popup and treated as no repeat.
+* `priority` — `high`, `medium` or `low`.
+* `start` — the day it becomes live; until then it is put aside.
+* `lastdone` — when a recurring task was last ticked off.
+
+!! Settings
+Under ''⚙'' on the Tasks tiddler:
+
+* the time of day a bare date falls due — 23:59 unless you change it
+* whether a tag's own tiddler carries its list
+* whether the sidebar shows a count of overdue tasks
+* the ''overdue colour''. Left blank, the plugin picks a red to suit your
+system's light or dark setting. That is a guess: a TiddlyWiki palette is
+chosen separately from the system setting, so a dark palette on a light
+system gets a red too dark to read against it. Set any CSS colour here and
+it is used instead.

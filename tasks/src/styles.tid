@@ -1,0 +1,148 @@
+\rules except dash
+/*
+A wikitext tiddler, not a .css file -- that is what lets <<colour>> and the
+$list below work. The cost is that wikitext markup fires inside the CSS, and
+`--` is markup: without the pragma above, every `--tk-*` custom property
+silently becomes an en dash and every colour in this file dies. Watch for
+`//` (italics) and `''` (bold) if you ever add a url() or a font stack, and
+keep selectors off the start of a line when they begin with `:` or `;`,
+which start a definition list.
+
+One red, used for every overdue signal, in two shades: #c0392b reads on a
+light background (5.4:1 on white) and #ff9d96 on a dark one (5.0:1 on the
+lightest of the dark palettes).
+
+Which to use can only be guessed at. A TiddlyWiki palette is chosen
+independently of the operating system's light/dark setting, and CSS cannot
+see the palette, so a dark palette under a light OS gets the dark red on a
+dark background -- 1.9:1, effectively invisible. Hence the override below:
+set $:/config/tasks/overduecolour to any CSS colour and it wins over the
+guess. The ⚙ settings on the Tasks tiddler offer it.
+*/
+html{--tk-overdue:#c0392b;--tk-line:rgba(127,127,127,.16);--tk-wash:rgba(127,127,127,.14);--tk-faint:rgba(127,127,127,.3);}
+@media (prefers-color-scheme:dark){html{--tk-overdue:#ff9d96;}}
+<$list filter="[[$:/config/tasks/overduecolour]get[text]trim[]!match[]]" variable="tkcolour">
+html{--tk-overdue:<<tkcolour>>;}
+</$list>
+
+.tk-view{font-size:14px;line-height:1.4;}
+.tk-board{max-width:760px;}
+.tk-inline{margin-top:1.4em;padding-top:.6em;border-top:1px solid var(--tk-line);}
+
+.tk-view-head{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;}
+.tk-view-title{font-size:15px;font-weight:600;}
+.tk-badge{flex:0 0 auto;padding:2px 8px;border-radius:11px;background:var(--tk-wash);font-size:11px;line-height:16px;opacity:.75;}
+.tk-badge-overdue{background:var(--tk-overdue);color:#fff;opacity:1;}
+.tk-view-tools{display:flex;align-items:center;gap:2px;margin-left:auto;}
+
+.tk-group{margin:14px 0 0;}
+.tk-group-head{display:flex;align-items:center;gap:7px;margin:0 0 2px;padding:0 2px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;opacity:.55;}
+.tk-group-overdue .tk-group-head{color:var(--tk-overdue);opacity:.95;}
+.tk-group-count{font-weight:400;letter-spacing:0;opacity:.75;}
+.tk-group-done{opacity:.72;}
+
+/* One task: tick box, title and date, then the buttons that appear on hover */
+.tk-row{position:relative;display:flex;align-items:flex-start;gap:9px;padding:6px 8px;border-radius:7px;transition:background-color .13s ease;}
+.tk-row:hover{background:var(--tk-wash);}
+.tk-body{flex:1 1 auto;min-width:0;}
+.tk-title{display:inline-block;max-width:100%;overflow:hidden;color:inherit;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom;}
+.tk-title.tc-tiddlylink,.tk-title.tc-tiddlylink:hover{color:inherit;}
+.tk-title:hover{text-decoration:underline;}
+.tk-meta{display:flex;align-items:baseline;flex-wrap:wrap;gap:7px;margin-top:1px;font-size:11.5px;line-height:1.5;opacity:.65;}
+.tk-due{white-space:nowrap;}
+.tk-rel{white-space:nowrap;opacity:.8;}
+.tk-tag{padding:0 6px;border:1px solid var(--tk-faint);border-radius:9px;color:inherit;font-size:10.5px;line-height:15px;white-space:nowrap;}
+.tk-tag.tc-tiddlylink,.tk-tag.tc-tiddlylink:hover{color:inherit;text-decoration:none;}
+.tk-tag:hover{background:var(--tk-wash);}
+
+/* Overdue, in red: the heading, the title and the date it slipped past */
+.tk-overdue .tk-title{color:var(--tk-overdue);}
+.tk-overdue .tk-meta{color:var(--tk-overdue);opacity:.95;}
+.tk-overdue .tk-rel{font-weight:600;}
+.tk-overdue .tk-box{border-color:var(--tk-overdue);}
+.tk-overdue .tk-tag{color:inherit;opacity:.75;}
+
+.tk-done .tk-title{text-decoration:line-through;opacity:.6;}
+.tk-done .tk-meta{opacity:.45;}
+
+.tk-check{flex:0 0 auto;margin:0;padding:2px 0 0;border:none;background:transparent;color:inherit;line-height:0;cursor:pointer;}
+.tk-box{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:1.5px solid var(--tk-faint);border-radius:4px;color:transparent;font-size:11px;line-height:1;transition:border-color .13s ease,background-color .13s ease;}
+.tk-check:hover .tk-box{border-color:currentColor;color:var(--tk-faint);}
+.tk-check:focus-visible{outline:none;}
+.tk-check:focus-visible .tk-box{box-shadow:0 0 0 2px rgba(87,120,216,.45);}
+.tk-done .tk-box{border-color:transparent;background:var(--tk-wash);color:inherit;}
+
+/* Hidden until the row is hovered, so a long list stays quiet */
+.tk-row-tools{display:flex;align-items:center;gap:2px;flex:0 0 auto;}
+.tk-tool{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:22px;padding:0 5px;border:none;border-radius:5px;background:transparent;color:inherit;font-size:11.5px;line-height:1;opacity:.6;cursor:pointer;transition:background-color .13s ease,opacity .13s ease;}
+.tk-tool:hover{opacity:1;background:var(--tk-wash);}
+.tk-row-tools .tk-tool{opacity:0;}
+.tk-row:hover .tk-row-tools .tk-tool,.tk-row:focus-within .tk-row-tools .tk-tool{opacity:.6;}
+.tk-row-tools .tk-tool:hover{opacity:1;}
+/* Holding a popup open keeps the button visible even once the pointer has left */
+.tk-row-tools .tk-tool[aria-expanded="true"]{opacity:1;background:var(--tk-wash);}
+.tk-tool-add{min-width:26px;height:24px;font-size:15px;}
+
+.tk-tagbar{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid var(--tk-line);}
+.tk-tagbar-tools{margin-left:auto;}
+.tk-tagchip{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border:1px solid var(--tk-faint);border-radius:12px;background:transparent;color:inherit;font-size:12px;line-height:17px;cursor:pointer;transition:background-color .13s ease;}
+.tk-tagchip:hover{background:var(--tk-wash);}
+.tk-tagchip-on{background:#5778d8;background:<<colour primary>>;border-color:#5778d8;border-color:<<colour primary>>;color:#fff;}
+.tk-tagchip-on:hover{filter:brightness(1.08);background:#5778d8;background:<<colour primary>>;}
+.tk-tagchip-count{opacity:.6;font-size:10.5px;}
+.tk-tagchip-on .tk-tagchip-count{opacity:.85;}
+
+.tk-empty{padding:10px 2px;font-size:12.5px;opacity:.55;}
+.tk-done-line{margin-top:16px;}
+.tk-check-line{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;opacity:.65;cursor:pointer;}
+
+.tk-pop{width:310px;max-width:calc(100vw - 32px);padding:13px;border-radius:10px;background:#fff;background:<<colour dropdown-background>>;color:inherit;color:<<colour foreground>>;border:1px solid rgba(127,127,127,.22);box-shadow:0 1px 2px rgba(0,0,0,.12),0 14px 34px -14px rgba(0,0,0,.5);}
+.tk-pop-head{margin-bottom:10px;font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;opacity:.6;}
+.tk-pop-note{margin:9px 0 0;font-size:11px;line-height:1.45;opacity:.6;}
+.tk-pop-actions{display:flex;justify-content:flex-end;gap:7px;margin-top:11px;}
+.tk-field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;font-size:12px;}
+.tk-field-label{opacity:.62;}
+.tk-picker{display:flex;gap:6px;}
+.tk-input{box-sizing:border-box;width:100%;padding:6px 9px;border:1px solid rgba(127,127,127,.32);border-radius:6px;background:transparent;color:inherit;font:inherit;font-size:12.5px;transition:border-color .13s ease,box-shadow .13s ease;}
+.tk-input:focus{outline:none;border-color:#5778d8;border-color:<<colour primary>>;box-shadow:0 0 0 2px rgba(87,120,216,.18);}
+.tk-input:disabled{opacity:.45;}
+.tk-input-date{flex:1 1 auto;min-width:0;}
+.tk-input-time{flex:0 0 auto;width:auto;min-width:94px;}
+.tk-chips{display:flex;flex-wrap:wrap;gap:5px;}
+.tk-chip{margin:0;padding:3px 9px;border:1px solid rgba(127,127,127,.28);border-radius:11px;background:transparent;color:inherit;font-size:11px;cursor:pointer;transition:background-color .13s ease;}
+.tk-chip:hover{background:var(--tk-wash);}
+.tk-btn{padding:6px 13px;border:1px solid rgba(127,127,127,.32);border-radius:7px;background:transparent;color:inherit;font-size:12.5px;cursor:pointer;transition:background-color .13s ease;}
+.tk-btn:hover{background:var(--tk-wash);}
+.tk-btn-primary{background:#5778d8;background:<<colour primary>>;border-color:#5778d8;border-color:<<colour primary>>;color:#fff;}
+.tk-btn-primary:hover{filter:brightness(1.08);background:#5778d8;background:<<colour primary>>;}
+
+/* The toolbar button takes the colour of whatever it is pointing at */
+.tk-glyph{font-style:normal;}
+.tk-glyph-overdue{color:var(--tk-overdue);}
+.tk-glyph-today,.tk-glyph-tomorrow{color:#5778d8;color:<<colour primary>>;}
+
+@media (max-width:750px){
+.tk-row-tools .tk-tool{opacity:.6;}
+.tk-picker{flex-wrap:wrap;}
+.tk-input-time{width:100%;}
+}
+
+/* Priority, as a dot before the title: only the top two earn a colour */
+.tk-flag{margin-right:5px;font-size:9px;line-height:1;vertical-align:middle;opacity:.5;}
+.tk-prio-high .tk-flag{color:#d1453b;opacity:1;}
+.tk-prio-medium .tk-flag{color:#e8a33d;opacity:1;}
+.tk-prio-low .tk-flag{opacity:.45;}
+.tk-prio-high .tk-title{font-weight:600;}
+
+.tk-repeat,.tk-start{white-space:nowrap;opacity:.8;}
+.tk-group-tool{margin-left:4px;font-weight:400;letter-spacing:0;text-transform:none;opacity:0;}
+.tk-group:hover .tk-group-tool,.tk-group:focus-within .tk-group-tool{opacity:.65;}
+.tk-group-tool:hover{opacity:1;}
+.tk-group-deferred{opacity:.72;}
+
+.tk-pop-head-more{margin-top:15px;padding-top:11px;border-top:1px solid var(--tk-line);}
+.tk-field-tight{margin-top:6px;margin-bottom:6px;}
+.tk-chip-on{background:#5778d8;background:<<colour primary>>;border-color:#5778d8;border-color:<<colour primary>>;color:#fff;}
+.tk-chip-on:hover{filter:brightness(1.08);background:#5778d8;background:<<colour primary>>;}
+.tk-pop-warn{margin:7px 0 0;font-size:11px;line-height:1.45;color:var(--tk-overdue);}
+.tk-pagebadge{font-variant-numeric:tabular-nums;color:var(--tk-overdue);font-weight:600;}

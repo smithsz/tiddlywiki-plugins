@@ -1,0 +1,10 @@
+\whitespace trim
+<$vars tktask=<<currentTiddler>> tknow={{$:/temp/tasks/now}} tkpop={{{ [[$:/state/tasks/toolbar/]addsuffix<currentTiddler>] }}}>
+<$button popup=<<tkpop>> tooltip="Set a due date for this tiddler" aria-label="Due date" class=<<tv-config-toolbar-class>>>
+<$list filter="[<tv-config-toolbar-icons>match[yes]]" variable="tknone"><span class={{{ [<currentTiddler>taskbucket<tknow>addprefix[tk-glyph tk-glyph-]] }}}>◴</span></$list>
+<$list filter="[<tv-config-toolbar-text>match[yes]]" variable="tknone"><span class="tc-btn-text"><$text text={{{ [<currentTiddler>taskrelative<tknow>!match[]] ~[[Due date]] }}}/></span></$list>
+</$button>
+<$reveal type="popup" state=<<tkpop>> position="belowleft" clamp="both" tag="div" class="tk-pop tc-popup-keep">
+<$transclude tiddler="$:/plugins/claude/tasks/templates/due-popup"/>
+</$reveal>
+</$vars>

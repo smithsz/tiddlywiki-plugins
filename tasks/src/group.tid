@@ -1,0 +1,15 @@
+\whitespace trim
+<$set name="tkitems" filter="[taskscope<taskTag>taskselect<tkbucket>,<tknow>]">
+<$list filter="[<tkitems>!match[]]" variable="tknone">
+<div class={{{ [<tkbucket>addprefix[tk-group tk-group-]] }}}>
+<div class="tk-group-head"><span class="tk-group-name"><$text text={{{ [<tkbucket>taskbucketcaption[]] }}}/></span><span class="tk-group-count"><$count filter="[enlist<tkitems>]"/></span>
+<$list filter="[<tkbucket>match[overdue]]" variable="tknone">
+<$button class="tk-tool tk-group-tool" tooltip="Move every one of these to the end of today" aria-label="Push all overdue to today">
+<$list filter="[enlist<tkitems>]" variable="tktask"><$action-taskdue task=<<tktask>> offset="0"/></$list>
+push to today</$button>
+</$list>
+</div>
+<$list filter="[enlist<tkitems>]" variable="tktask"><$transclude tiddler="$:/plugins/claude/tasks/templates/row"/></$list>
+</div>
+</$list>
+</$set>

@@ -1,0 +1,3 @@
+\define tasks(tag)
+<$vars taskTag="""$tag$"""><$transclude tiddler="$:/plugins/claude/tasks/templates/view"/></$vars>
+\end

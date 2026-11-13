@@ -36,6 +36,35 @@ shipping matching light and dark palettes.
 Install by dragging `stylish.json` into a TiddlyWiki, or importing it. Then
 select it under *Control Panel → Appearance → Theme*.
 
+### [tasks](tasks/tasks.json)
+
+Due dates on your tiddlers, and a date-ordered task list for any tag. A task
+is an ordinary tiddler with a `due` field (`20261125235959999`, the same UTC
+stamp TiddlyWiki writes to `created` and `modified`), so tasks are your own
+tiddlers rather than entries in a hidden store. Tag them with whatever
+groups them and each of those tags gets a list ordered by due date and
+grouped under Overdue, Today, Tomorrow, This week, Later and No due date,
+with anything overdue in red — the plugin defines no tags itself.
+
+Dates can be typed in words (`fri`, `+3d`, `25 nov`, `tomorrow 9am`). Tasks
+can repeat (`weekly`, `every 3 days`), carry a priority that breaks ties
+within a day, and hold a `start` date that keeps them out of the way until
+they are actionable. The sidebar shows a count of everything overdue, and
+the Overdue heading can push the whole backlog to today. A tag's own tiddler
+carries its list, `<<tasks YourTag>>` drops one into any tiddler, and a
+toolbar button schedules whatever you are reading.
+
+Install by dragging `tasks.json` into a TiddlyWiki, or importing it. Then
+open the *Tasks* tiddler.
+
+- `tasks/src/` — the plugin source, one file per tiddler
+- `tasks/build.py` — assembles `src/` into `tasks.json`; run
+  `python3 build.py` inside `tasks/` after editing a source file
+- `tasks/test.js` — tests the packaged plugin: the date arithmetic, and the
+  rendered views. Run `node test.js` inside `tasks/` (it finds TiddlyWiki in
+  `node_modules`, in a global install, or wherever you point it:
+  `node test.js /path/to/tiddlywiki`)
+
 ### [tw5-codemirror6](tw5-codemirror6/)
 
 Replaces TiddlyWiki's plain textarea tiddler editor with a

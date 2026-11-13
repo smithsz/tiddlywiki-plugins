@@ -1,0 +1,13 @@
+\whitespace trim
+\define tk-add-actions()
+<$action-taskadd title={{$:/temp/tasks/new-title}} tag={{$:/temp/tasks/new-tag}} date={{$:/temp/tasks/new-date}} time={{$:/temp/tasks/new-time}}/><$action-setfield $tiddler="$:/temp/tasks/new-title" text=""/><$action-deletetiddler $tiddler="$:/state/tasks/add"/>
+\end
+<div class="tk-pop-head">New task</div>
+<$keyboard key="enter" tag="div" class="tk-form" actions=<<tk-add-actions>>>
+<div class="tk-field"><span class="tk-field-label">Task</span><$edit-text tiddler="$:/temp/tasks/new-title" tag="input" default="" class="tk-input" placeholder="What needs doing" focus="true"/></div>
+<div class="tk-field"><span class="tk-field-label">Tag</span><$edit-text tiddler="$:/temp/tasks/new-tag" tag="input" default="" class="tk-input" placeholder="blank = untagged"/></div>
+<$list filter="[tasktags[]]" variable="tkt"><$button class="tk-chip" tooltip="File it under this tag"><$action-setfield $tiddler="$:/temp/tasks/new-tag" text=<<tkt>>/><$text text=<<tkt>>/></$button></$list>
+<div class="tk-field"><span class="tk-field-label">Due</span><div class="tk-picker"><$edit-text tiddler="$:/temp/tasks/new-date" tag="input" type="date" default="" class="tk-input tk-input-date"/><$edit-text tiddler="$:/temp/tasks/new-time" tag="input" type="time" default="" class="tk-input tk-input-time"/></div></div>
+<div class="tk-pop-note">Leave the date blank to file it under&#32;''No due date''. A task whose title is already in the wiki keeps what it says and just gains the tag and the date.</div>
+<div class="tk-pop-actions"><$button class="tk-btn tk-btn-primary" actions=<<tk-add-actions>>>Add</$button></div>
+</$keyboard>

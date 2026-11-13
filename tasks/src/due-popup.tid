@@ -1,0 +1,59 @@
+\whitespace trim
+\define tk-repeat-chip(rule,label)
+<$button class={{{ [<tktask>taskrepeat[]match[$rule$]then[tk-chip tk-chip-on]else[tk-chip]] }}}><$action-taskrepeat task=<<tktask>> repeat="$rule$"/>$label$</$button>
+\end
+\define tk-when-actions()
+<$action-taskdue task=<<tktask>> text={{$:/temp/tasks/when}}/><$action-setfield $tiddler="$:/temp/tasks/when" text=""/>
+\end
+\define tk-start-actions()
+<$action-taskstart task=<<tktask>> text={{$:/temp/tasks/startwhen}}/><$action-setfield $tiddler="$:/temp/tasks/startwhen" text=""/>
+\end
+<div class="tk-pop-head">Due date</div>
+<$task-due-picker task=<<tktask>> field="due"/>
+<$keyboard key="enter" tag="div" class="tk-field tk-field-tight" actions=<<tk-when-actions>>>
+<$edit-text tiddler="$:/temp/tasks/when" tag="input" default="" class="tk-input" placeholder="or type it: fri, +3d, 25 nov, 9am"/>
+</$keyboard>
+<div class="tk-chips">
+<$button class="tk-chip" tooltip="Due at the end of today"><$action-taskdue task=<<tktask>> offset="0"/>Today</$button>
+<$button class="tk-chip" tooltip="Due at the end of tomorrow"><$action-taskdue task=<<tktask>> offset="1"/>Tomorrow</$button>
+<$button class="tk-chip" tooltip="Due a week from today"><$action-taskdue task=<<tktask>> offset="7"/>Next week</$button>
+</div>
+<div class="tk-pop-note">A date on its own falls due at the end of that day.</div>
+
+<div class="tk-pop-head tk-pop-head-more">Repeats</div>
+<div class="tk-chips">
+<$button class={{{ [<tktask>get[repeat]match[]then[tk-chip tk-chip-on]else[tk-chip]] }}}><$action-taskrepeat task=<<tktask>> repeat=""/>Never</$button>
+<$macrocall $name="tk-repeat-chip" rule="daily" label="Daily"/>
+<$macrocall $name="tk-repeat-chip" rule="weekly" label="Weekly"/>
+<$macrocall $name="tk-repeat-chip" rule="every 2 weeks" label="Fortnightly"/>
+<$macrocall $name="tk-repeat-chip" rule="monthly" label="Monthly"/>
+<$macrocall $name="tk-repeat-chip" rule="yearly" label="Yearly"/>
+</div>
+<div class="tk-field tk-field-tight"><$edit-text tiddler=<<tktask>> field="repeat" tag="input" default="" class="tk-input" placeholder="or: every 3 days, every 2 weeks"/></div>
+<$list filter="[<tktask>get[repeat]!match[]] :filter[<tktask>taskrepeat[]match[]]" variable="tknone">
+<div class="tk-pop-warn">That repeat was not understood, so this task will not come round again.</div>
+</$list>
+<$list filter="[<tktask>taskrepeat[]!match[]]" variable="tknone">
+<div class="tk-pop-note">Ticking it off moves it to the next time round rather than finishing it. There is no undoing that — set the date here if you tick it by mistake.</div>
+</$list>
+
+<div class="tk-pop-head tk-pop-head-more">Priority</div>
+<div class="tk-chips">
+<$list filter="None High Medium Low" variable="tklevel">
+<$vars tkvalue={{{ [<tklevel>match[None]then[]else<tklevel>lowercase[]] }}}>
+<$button class={{{ [<tktask>taskpriority[]match<tkvalue>then[tk-chip tk-chip-on]else[tk-chip]] }}}><$action-taskpriority task=<<tktask>> priority=<<tkvalue>>/><$text text=<<tklevel>>/></$button>
+</$vars>
+</$list>
+</div>
+
+<div class="tk-pop-head tk-pop-head-more">Not before</div>
+<$task-due-picker task=<<tktask>> field="start"/>
+<$keyboard key="enter" tag="div" class="tk-field tk-field-tight" actions=<<tk-start-actions>>>
+<$edit-text tiddler="$:/temp/tasks/startwhen" tag="input" default="" class="tk-input" placeholder="or type it: mon, +2w"/>
+</$keyboard>
+<div class="tk-pop-note">A start date keeps a task out of the way — under ''Not started yet'' — until the day comes.</div>
+
+<div class="tk-pop-actions">
+<$button class="tk-btn" tooltip="Take the due date off this task"><$action-taskdue task=<<tktask>> clear="yes"/><$action-deletetiddler $tiddler=<<tkpop>>/>Unschedule</$button>
+<$button class="tk-btn tk-btn-primary"><$action-deletetiddler $tiddler=<<tkpop>>/>Done</$button>
+</div>
