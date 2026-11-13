@@ -4,9 +4,14 @@ A bookmark bar for TiddlyWiki, in the shape of a browser's: a thin strip of
 favicon-and-name links, with folders that drop open underneath them.
 
 !! Open it
-Open the ''Bookmarks'' tiddler (type it in the search box and click it). It
-is designed to sit at the top of your wiki, so add `Bookmarks` to
-''$:/DefaultTiddlers'' above whatever else you open there.
+The bar lives in a tiddler called ''Bookmarks''. It is meant to sit at the
+top of your wiki, so the usual thing is to add `Bookmarks` to
+''$:/DefaultTiddlers'', above whatever else you open there.
+
+To open it once by hand, put `#Bookmarks` on the end of the wiki's address,
+or look under ''More → Shadows'' in the sidebar. The search box will not
+turn it up: being part of this plugin it is a shadow tiddler, and the
+sidebar search only looks through tiddlers you have made yourself.
 
 To keep it in view above the story river instead, tag
 ''$:/plugins/claude/bookmarks/bar'' with `$:/tags/AboveStory`.
