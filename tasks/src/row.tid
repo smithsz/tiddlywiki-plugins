@@ -15,7 +15,7 @@
 <$list filter="[<tkbucket>!match[done]]" variable="tknone"><$list filter="[<tktask>taskrelative<tknow>!match[]]" variable="tkrel"><span class="tk-rel"><$text text=<<tkrel>>/></span></$list></$list>
 <$list filter="[<tkrepeat>!match[]]" variable="tknone"><span class="tk-repeat" title="This task comes round again">↻&#32;<$text text=<<tkrepeat>>/></span></$list>
 <$list filter="[<tkbucket>match[deferred]]" variable="tknone"><span class="tk-start">starts&#32;<$text text={{{ [<tktask>taskstarttext[]] }}}/></span></$list>
-<$list filter="[<tktask>tags[]!is[system]] -[<taskTag>]" variable="tktag"><$link to=<<tktag>> class="tk-tag"><$text text=<<tktag>>/></$link></$list>
+<$list filter="[<tktask>tags[]!is[system]] -[<taskTag>] -[taskmarkertags[]]" variable="tktag"><$link to=<<tktag>> class="tk-tag"><$text text=<<tktag>>/></$link></$list>
 </div>
 </div>
 <$list filter="[<tkbucket>!match[done]]" variable="tknone">

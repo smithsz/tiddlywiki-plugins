@@ -133,7 +133,7 @@ function buildWiki() {
 	tiddler(tiddlers, "Due this week", {tags: "school", due: endOfDay(4)});
 	tiddler(tiddlers, "Due much later", {tags: "school", due: endOfDay(40)});
 	tiddler(tiddlers, "Not yet scheduled", {tags: "school"});
-	tiddler(tiddlers, "Already finished", {tags: "school", due: endOfDay(-2), done: endOfDay(-2)});
+	tiddler(tiddlers, "Already finished", {tags: "school done", due: endOfDay(-2)});
 	tiddler(tiddlers, "A morning deadline", {tags: "errands", due: stamp(new Date(new Date().getFullYear() + 1, 4, 20, 9, 30, 0, 0))});
 	tiddler(tiddlers, "school", {});
 	tiddler(tiddlers, "An untagged note", {});
@@ -142,6 +142,10 @@ function buildWiki() {
 	tiddler(tiddlers, "Urgent chore", {tags: "chores", due: endOfDay(2), priority: "high"});
 	tiddler(tiddlers, "Idle chore", {tags: "chores", due: endOfDay(2), priority: "low"});
 	tiddler(tiddlers, "Overdue chore", {tags: "chores", due: endOfDay(-3)});
+	tiddler(tiddlers, "Audit requirements.txt", {tags: "[[Python 3.10 EOL]] todo"});
+	tiddler(tiddlers, "Upgrade CI image", {tags: "[[Python 3.10 EOL]] todo"});
+	tiddler(tiddlers, "Python 3.10 EOL", {});
+	tiddler(tiddlers, "Shopping", {tags: "notes"});
 	tiddler(tiddlers, "Book the venue", {tags: "chores", due: endOfDay(-1), start: endOfDay(10)});
 	write(path.join(tiddlers, "cfg.tid"), "title: $:/config/tasks/tag\n\nschool");
 	write(path.join(tiddlers, "cfg2.tid"), "title: $:/config/tasks/showdeferred\n\nyes");
@@ -161,6 +165,11 @@ $tw.boot.boot(function () {
 	var version = (wiki.getTiddler("$:/core") || {fields: {}}).fields.version;
 	console.log("core:       " + version + "\n");
 
+	/* currentTiddler must survive, so the widget form, not {{...}} */
+	function throughViewTemplate(title) {
+		return wiki.renderText("text/html", "text/vnd.tiddlywiki",
+			"<$tiddler tiddler='" + title + "'><$transclude tiddler='$:/core/ui/ViewTemplate'/></$tiddler>");
+	}
 	function field(title, name) {
 		var t = wiki.getTiddler(title);
 		return t ? (t.fields[name] || "") : "<no such tiddler>";
@@ -238,10 +247,9 @@ $tw.boot.boot(function () {
 	check("unscheduled tasks sort alphabetically",
 		core.select(wiki, core.scope(wiki, "ties"), "someday", "").join(" | "),
 		"No date A | no date b");
-	var when = core.stringify(new Date());
-	wiki.addTiddler(new $tw.Tiddler({title: "done b", tags: ["ties"], due: tie, done: when, text: ""}));
-	wiki.addTiddler(new $tw.Tiddler({title: "Done A", tags: ["ties"], due: tie, done: when, text: ""}));
-	check("the same completion time breaks alphabetically",
+	wiki.addTiddler(new $tw.Tiddler({title: "done b", tags: ["ties", "done"], due: tie, text: ""}));
+	wiki.addTiddler(new $tw.Tiddler({title: "Done A", tags: ["ties", "done"], due: tie, text: ""}));
+	check("the same due date breaks alphabetically in the done list too",
 		core.select(wiki, core.scope(wiki, "ties"), "done", "").join(" | "),
 		"Done A | done b");
 	wiki.addTiddler(new $tw.Tiddler({title: "tie one", tags: ["beta"], due: tie, text: ""}));
@@ -353,7 +361,7 @@ $tw.boot.boot(function () {
 	wiki.addTiddler(new $tw.Tiddler({title: "Already started", tags: ["errands"], due: endOfDay(-1), start: endOfDay(-5), text: ""}));
 	check("a start date gone by changes nothing", core.bucket(wiki, "Already started", ""), "overdue");
 	check("being done still outranks being deferred", (function () {
-		wiki.addTiddler(new $tw.Tiddler({title: "Deferred and done", tags: ["errands"], due: endOfDay(-1), start: endOfDay(10), done: endOfDay(0), text: ""}));
+		wiki.addTiddler(new $tw.Tiddler({title: "Deferred and done", tags: ["errands", "done"], due: endOfDay(-1), start: endOfDay(10), text: ""}));
 		return core.bucket(wiki, "Deferred and done", "");
 	})(), "done");
 
@@ -393,10 +401,6 @@ $tw.boot.boot(function () {
 	check("every link in the view belongs to a row or a tag", links <= rows, "true");
 
 	section("a tag's own tiddler carries its list");
-	function throughViewTemplate(title) {
-		return wiki.renderText("text/html", "text/vnd.tiddlywiki",
-			"<$tiddler tiddler='" + title + "'><$transclude tiddler='$:/core/ui/ViewTemplate'/></$tiddler>");
-	}
 	var tagPage = throughViewTemplate("school");
 	contains("the list appears under the text", tagPage, 'class="tk-inline"');
 	contains("for that tag", tagPage, 'class="tk-view-title">school<');
@@ -421,10 +425,11 @@ $tw.boot.boot(function () {
 	check("the urgent one comes before the idle one",
 		sameDay.indexOf("Urgent chore") < sameDay.indexOf("Idle chore"), "true");
 
-	section("the sidebar overdue count");
+	section("the sidebar button");
 	var badge = render("$:/plugins/claude/tasks/pagecontrol");
-	contains("a count is shown", badge, 'class="tk-pagebadge"');
-	contains("the button is labelled for a screen reader", badge, 'aria-label="Overdue tasks"');
+	contains("the button is there", badge, 'aria-label="Tasks"');
+	contains("with a count of what is overdue", badge, 'class="tk-pagebadge"');
+	contains("it is labelled for a screen reader", badge, 'aria-label="Tasks"');
 	contains("and navigates to the task list", field("$:/plugins/claude/tasks/pagecontrol", "text"), 'to="Tasks"');
 	wiki.addTiddler(new $tw.Tiddler({title: "$:/config/tasks/pagebadge", text: "no"}));
 	check("and it can be turned off", render("$:/plugins/claude/tasks/pagecontrol").indexOf("tk-pagebadge"), -1);
@@ -442,6 +447,29 @@ $tw.boot.boot(function () {
 	absent("and raises no warning", weekly, "tk-pop-warn");
 	contains("the popup offers a start date", weekly, ">Not before<");
 	contains("and a date in words", weekly, "or type it:");
+
+	section("a tag whose tasks are all still unscheduled");
+	/* The chip and the inline view used to ask has[due], so a tag you had
+	   tagged but not yet dated was unreachable: no chip beside All, and no
+	   list on its own tiddler either. */
+	check("the tag is offered as a chip", core.tags(wiki).indexOf("Python 3.10 EOL") >= 0, "true");
+	check("its tasks are in the all-tasks view",
+		core.scope(wiki, "").indexOf("Audit requirements.txt") >= 0, "true");
+	check("and they file under no due date",
+		core.select(wiki, core.scope(wiki, "Python 3.10 EOL"), "someday", "").join(" | "),
+		"Audit requirements.txt | Upgrade CI image");
+	var eolPage = throughViewTemplate("Python 3.10 EOL");
+	contains("its own tiddler shows the list", eolPage, 'class="tk-inline"');
+	contains("with the unscheduled tasks in it", eolPage, "Audit requirements.txt");
+
+	section("but a tag of ordinary tiddlers is still not a task tag");
+	check("a plain tagged tiddler is not a task", core.isTask(wiki, "Shopping"), "false");
+	check("so notes is not offered as a chip", core.tags(wiki).indexOf("notes"), -1);
+	check("and tasksonly filters it out",
+		wiki.filterTiddlers("[tag[notes]tasksonly[]]").length, 0);
+	absent("its tiddler grows no task list", throughViewTemplate("Shopping"), "tk-inline");
+	check("tasksonly is a real operator, not a field lookup",
+		wiki.filterTiddlers("[tag[Python 3.10 EOL]tasksonly[]]").length, 2);
 
 	section("the tag index, not a full wiki scan");
 	/* Deciding whether a tiddler is somebody's tag happens for every tiddler
@@ -487,23 +515,137 @@ $tw.boot.boot(function () {
 	check("and files it under no due date", core.bucket(wiki, "Due this week", ""), "someday");
 	core.toggleDone(wiki, "Due today");
 	check("ticking off", core.bucket(wiki, "Due today", ""), "done");
-	check("the done field holds a stamp", /^\d{17}$/.test(field("Due today", "done")), "true");
+	check("by the tag, with no field written", field("Due today", "tags").join(",").indexOf("done") >= 0 && field("Due today", "done") === "", "true");
 	core.toggleDone(wiki, "Due today");
 	check("and unticking puts it back", core.bucket(wiki, "Due today", ""), "today");
 	check("writing to a missing tiddler fails quietly", core.setDue(wiki, "No Such Tiddler", "20261125235959999"), "false");
+
+	section("every task carries a todo tag");
+	core.add(wiki, {title: "Freshly added", tag: "chores", date: "2027-03-01", time: ""});
+	check("a task made through the add form is tagged", field("Freshly added", "tags").join(","), "chores,todo");
+	wiki.addTiddler(new $tw.Tiddler({title: "Given a date", tags: ["chores"], text: ""}));
+	core.setDue(wiki, "Given a date", core.stampFrom(wiki, "2027-03-01", ""));
+	check("so is one that is given a date", field("Given a date", "tags").join(","), "chores,todo");
+	core.setDue(wiki, "Given a date", "");
+	check("unscheduling leaves the tag on", field("Given a date", "tags").join(","), "chores,todo");
+	core.setDue(wiki, "Given a date", core.stampFrom(wiki, "2027-03-02", ""));
+	core.setDue(wiki, "Given a date", core.stampFrom(wiki, "2027-03-03", ""));
+	check("setting a date twice does not double the tag", field("Given a date", "tags").join(","), "chores,todo");
+
+	section("finishing adds the done tag and keeps todo");
+	core.setDone(wiki, "Given a date", true);
+	check("both tags are on", field("Given a date", "tags").join(","), "chores,todo,done");
+	check("and it reads as done", core.bucket(wiki, "Given a date", ""), "done");
+	check("no done field is written", field("Given a date", "done"), "");
+	core.setDone(wiki, "Given a date", true);
+	check("finishing twice changes nothing", field("Given a date", "tags").join(","), "chores,todo,done");
+	core.setDone(wiki, "Given a date", false);
+	check("putting it back drops done but keeps todo", field("Given a date", "tags").join(","), "chores,todo");
+	check("and it is outstanding again", core.bucket(wiki, "Given a date", "") !== "done", "true");
+	check("the other tags are left alone", (function () {
+		wiki.addTiddler(new $tw.Tiddler({title: "Keep my tags", tags: ["chores", "errands"], due: endOfDay(1), text: ""}));
+		core.setDone(wiki, "Keep my tags", true);
+		core.setDone(wiki, "Keep my tags", false);
+		return field("Keep my tags", "tags").join(",");
+	})(), "chores,errands,todo");
+
+	section("the done tag is the only thing that marks completion");
+	wiki.addTiddler(new $tw.Tiddler({title: "Tagged by hand", tags: ["chores", "done"], due: endOfDay(-2), text: ""}));
+	check("tagging a task done finishes it", core.bucket(wiki, "Tagged by hand", ""), "done");
+	check("so it is not also overdue", core.bucket(wiki, "Tagged by hand", "") !== "overdue", "true");
+	check("it sorts into the done list", core.select(wiki, core.scope(wiki, "chores"), "done", "").indexOf("Tagged by hand") >= 0, "true");
+	wiki.addTiddler(new $tw.Tiddler({title: "Untagged by hand", tags: ["chores"], due: endOfDay(-2), text: ""}));
+	check("without the tag it is back on the list", core.bucket(wiki, "Untagged by hand", ""), "overdue");
+
+	section("a done field left by an earlier version is migrated");
+	wiki.addTiddler(new $tw.Tiddler({title: "Finished in v1.4", tags: ["chores"], due: endOfDay(-5), done: endOfDay(-5), text: ""}));
+	check("the stale field alone does not mark it done", core.bucket(wiki, "Finished in v1.4", ""), "overdue");
+	core.syncTags(wiki, "Finished in v1.4");
+	check("catching up turns the field into the tag", field("Finished in v1.4", "tags").join(","), "chores,todo,done");
+	check("and empties the field", field("Finished in v1.4", "done"), "");
+	check("so it reads as done again", core.bucket(wiki, "Finished in v1.4", ""), "done");
+
+	section("catching up tasks made before the tags existed");
+	wiki.addTiddler(new $tw.Tiddler({title: "Legacy open", tags: ["chores"], due: endOfDay(3), text: ""}));
+	core.scope(wiki, "").forEach(function (title) { core.syncTags(wiki, title); });
+	check("an old open task gains the todo tag", field("Legacy open", "tags").join(","), "chores,todo");
+
+	section("the plugin will not tag a tiddler that is not a task");
+	wiki.addTiddler(new $tw.Tiddler({title: "Just a note", tags: ["chores"], text: ""}));
+	check("no date and no marker means no tag", core.syncTags(wiki, "Just a note"), "false");
+	check("so its tags are untouched", field("Just a note", "tags").join(","), "chores");
+
+	section("a recurring task is never tagged done");
+	wiki.addTiddler(new $tw.Tiddler({title: "Recurring tag check", tags: ["chores"], due: endOfDay(-1), repeat: "weekly", text: ""}));
+	core.toggleDone(wiki, "Recurring tag check");
+	check("it stays a todo instead", field("Recurring tag check", "tags").join(","), "chores,todo");
+
+	section("neither marker tag gets in the way");
+	check("done is not offered as a tag you have tasks under", core.tags(wiki).indexOf("done"), -1);
+	check("and neither is todo, which every task carries", core.tags(wiki).indexOf("todo"), -1);
+	check("both are named for the templates to exclude", core.markerTags(wiki).join(","), "todo,done");
+	var choresView = wiki.renderText("text/html", "text/vnd.tiddlywiki",
+		"\\import [all[shadows+tiddlers]tag[$:/tags/Macro]]\n<<tasks chores>>");
+	absent("nor drawn as a pill on a finished row", choresView, '>done</a>');
+	absent("nor is todo drawn on every row", choresView, '>todo</a>');
+
+	section("and can be turned off, or renamed");
+	wiki.addTiddler(new $tw.Tiddler({title: "$:/config/tasks/donetag", text: ""}));
+	wiki.addTiddler(new $tw.Tiddler({title: "No tag wanted", tags: ["chores"], due: endOfDay(1), text: ""}));
+	core.setDone(wiki, "No tag wanted", true);
+	check("with no done tag configured, nothing marks it done", field("No tag wanted", "tags").join(","), "chores,todo");
+	check("so it cannot be finished at all", core.bucket(wiki, "No tag wanted", "") !== "done", "true");
+	check("and a stray done tag no longer counts", core.bucket(wiki, "Tagged by hand", "") !== "done", "true");
+	wiki.addTiddler(new $tw.Tiddler({title: "$:/config/tasks/donetag", text: "finished"}));
+	wiki.addTiddler(new $tw.Tiddler({title: "Renamed tag", tags: ["chores"], due: endOfDay(1), text: ""}));
+	core.setDone(wiki, "Renamed tag", true);
+	check("a renamed tag is used instead", field("Renamed tag", "tags").join(","), "chores,todo,finished");
+	wiki.addTiddler(new $tw.Tiddler({title: "$:/config/tasks/donetag", text: "done"}));
+	wiki.addTiddler(new $tw.Tiddler({title: "$:/config/tasks/todotag", text: ""}));
+	wiki.addTiddler(new $tw.Tiddler({title: "No todo wanted", tags: ["chores"], text: ""}));
+	core.setDue(wiki, "No todo wanted", core.stampFrom(wiki, "2027-03-01", ""));
+	check("a blank todo tag means none is written", field("No todo wanted", "tags").join(","), "chores");
+	wiki.addTiddler(new $tw.Tiddler({title: "$:/config/tasks/todotag", text: "todo"}));
 
 	section("adding");
 	core.add(wiki, {title: "Brand new", tag: "school", date: "2026-12-01", time: ""});
 	check("the task exists", wiki.tiddlerExists("Brand new"), "true");
 	check("with its due date", field("Brand new", "due"), "20261201235959999");
-	check("and its tag", field("Brand new", "tags").join(","), "school");
+	check("its tag, and the todo marker", field("Brand new", "tags").join(","), "school,todo");
 	check("as an ordinary tiddler, not a system one", "Brand new".indexOf("$:/"), -1);
 	core.add(wiki, {title: "school", tag: "errands", date: "2026-12-05", time: ""});
 	check("adopting a title keeps what the tiddler already said", field("school", "text"), "school.\n");
-	check("and adds the tag alongside", field("school", "tags").join(","), "errands");
+	check("and adds the tag alongside", field("school", "tags").join(","), "errands,todo");
 	core.add(wiki, {title: "school", tag: "errands", date: "2026-12-06", time: ""});
-	check("adopting twice does not double the tag", field("school", "tags").join(","), "errands");
+	check("adopting twice does not double the tag", field("school", "tags").join(","), "errands,todo");
 	check("a blank title adds nothing", core.add(wiki, {title: "   "}), "");
+
+	section("reaching the task list at all");
+	check("Tasks is a shadow tiddler, not one the user made", wiki.isShadowTiddler("Tasks"), "true");
+	check("so the sidebar search cannot find it",
+		wiki.filterTiddlers("[!is[system]search[Tasks]sort[title]]").indexOf("Tasks"), -1);
+	check("and neither can the All list",
+		wiki.filterTiddlers("[all[tiddlers]!is[system]]").indexOf("Tasks"), -1);
+	check("but it does exist, with the board in it",
+		wiki.getTiddlerText("Tasks", "").indexOf("tasks/board") >= 0, "true");
+	check("a shadow-aware search does find it",
+		wiki.filterTiddlers("[all[shadows]!is[system]search[Tasks]]").indexOf("Tasks") >= 0, "true");
+	contains("so the plugin ships a sidebar button as the way in",
+		field("$:/plugins/claude/tasks/pagecontrol", "text"), 'to="Tasks"');
+	check("which is tagged to appear there",
+		(wiki.getTiddler("$:/plugins/claude/tasks/pagecontrol").fields.tags || []).join(","), "$:/tags/PageControls");
+
+	section("the sidebar button when nothing is overdue");
+	core.select(wiki, core.scope(wiki, ""), "overdue", "").forEach(function (title) {
+		core.setDue(wiki, title, core.dueInDays(wiki, title, 7));
+	});
+	check("nothing is overdue now", core.select(wiki, core.scope(wiki, ""), "overdue", "").length, 0);
+	var quiet = render("$:/plugins/claude/tasks/pagecontrol");
+	contains("the button is still there", quiet, 'aria-label="Tasks"');
+	absent("but carries no count", quiet, "tk-pagebadge");
+	wiki.addTiddler(new $tw.Tiddler({title: "$:/config/tasks/pagebadge", text: "no"}));
+	check("and it can be turned off entirely",
+		render("$:/plugins/claude/tasks/pagecontrol").indexOf("aria-label"), -1);
 
 	/* ---------------------------------------------------------------- */
 	console.log("\n" + checks + " checks, " + failures.length + " failed");

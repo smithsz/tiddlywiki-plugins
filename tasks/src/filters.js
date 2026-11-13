@@ -78,6 +78,29 @@ exports.taskstarttext = function(source,operator,options){
 	return results;
 };
 
+/* The tag a finished task carries, or nothing when that is turned off */
+exports.taskdonetag = function(source,operator,options){
+	var tag = core.doneTag(options.wiki);
+	return tag ? [tag] : [];
+};
+
+/*
+Narrow a list of tiddlers to the ones that are actually tasks. Asking for
+has[due] instead would miss a task that has not been scheduled yet.
+*/
+exports.tasksonly = function(source,operator,options){
+	var results = [];
+	source(function(tiddler,title){
+		if(core.isTask(options.wiki,title)){ results.push(title); }
+	});
+	return results;
+};
+
+/* Both tags the plugin writes, for the lists that would rather not show them */
+exports.taskmarkertags = function(source,operator,options){
+	return core.markerTags(options.wiki);
+};
+
 /* Every tag that has a task under it, the ones with most to do first */
 exports.tasktags = function(source,operator,options){
 	return core.tags(options.wiki);

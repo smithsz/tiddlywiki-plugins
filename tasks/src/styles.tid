@@ -26,7 +26,6 @@ html{--tk-overdue:<<tkcolour>>;}
 </$list>
 
 .tk-view{font-size:14px;line-height:1.4;}
-.tk-board{max-width:760px;}
 .tk-inline{margin-top:1.4em;padding-top:.6em;border-top:1px solid var(--tk-line);}
 
 .tk-view-head{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;}
@@ -145,4 +144,4 @@ html{--tk-overdue:<<tkcolour>>;}
 .tk-chip-on{background:#5778d8;background:<<colour primary>>;border-color:#5778d8;border-color:<<colour primary>>;color:#fff;}
 .tk-chip-on:hover{filter:brightness(1.08);background:#5778d8;background:<<colour primary>>;}
 .tk-pop-warn{margin:7px 0 0;font-size:11px;line-height:1.45;color:var(--tk-overdue);}
-.tk-pagebadge{font-variant-numeric:tabular-nums;color:var(--tk-overdue);font-weight:600;}
+.tk-pagebadge{margin-left:3px;font-variant-numeric:tabular-nums;color:var(--tk-overdue);font-weight:600;}

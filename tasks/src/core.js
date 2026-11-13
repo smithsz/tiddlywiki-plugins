@@ -22,6 +22,8 @@ var START_FIELD = "start";
 var REPEAT_FIELD = "repeat";
 var PRIORITY_FIELD = "priority";
 var LASTDONE_FIELD = "lastdone";
+var DONE_TAG_CONFIG = "$:/config/tasks/donetag";
+var TODO_TAG_CONFIG = "$:/config/tasks/todotag";
 var NOW_TIDDLER = "$:/temp/tasks/now";
 var TIME_CONFIG = "$:/config/tasks/defaulttime";
 var DAY = 86400000;
@@ -106,14 +108,49 @@ function dueDate(wiki,title){
 	return tiddler ? parseStamp(tiddler.fields[DUE_FIELD]) : null;
 }
 
-function doneDate(wiki,title){
-	var tiddler = wiki.getTiddler(title);
-	return tiddler ? parseStamp(tiddler.fields[DONE_FIELD]) : null;
+function doneTag(wiki){
+	return String(wiki.getTiddlerText(DONE_TAG_CONFIG,"done") || "").trim();
 }
 
+function todoTag(wiki){
+	return String(wiki.getTiddlerText(TODO_TAG_CONFIG,"todo") || "").trim();
+}
+
+/* The two tags the plugin writes, for the places that want to hide them */
+function markerTags(wiki){
+	return [todoTag(wiki),doneTag(wiki)].filter(function(tag){ return !!tag; });
+}
+
+function hasTag(tiddler,tag){
+	return !!tag && (tiddler.fields.tags || []).indexOf(tag) !== -1;
+}
+
+/* Add and remove tags in one pass; null when nothing needed changing */
+function withTags(tiddler,add,remove){
+	var tags = (tiddler.fields.tags || []).slice(0), changed = false;
+	remove.forEach(function(tag){
+		for(var at = tags.indexOf(tag); tag && at !== -1; at = tags.indexOf(tag)){
+			tags.splice(at,1);
+			changed = true;
+		}
+	});
+	add.forEach(function(tag){
+		if(tag && tags.indexOf(tag) === -1){
+			tags.push(tag);
+			changed = true;
+		}
+	});
+	return changed ? tags : null;
+}
+
+/*
+Finished means carrying the done tag, and nothing else: there is no field
+to disagree with it, and tagging or untagging a tiddler by hand is all it
+takes to move a task on or off the list.
+*/
 function isDone(wiki,title){
 	var tiddler = wiki.getTiddler(title);
-	return !!(tiddler && String(tiddler.fields[DONE_FIELD] || "").trim());
+	return !!tiddler && hasTag(tiddler,doneTag(wiki));
 }
 
 /*
@@ -405,9 +442,11 @@ function scope(wiki,tag){
 		});
 		return results;
 	}
+	var markers = markerTags(wiki);
 	wiki.each(function(tiddler,title){
 		if(isSystem(title)){ return; }
-		if(tiddler.fields[DUE_FIELD] || tiddler.fields[DONE_FIELD]){ results.push(title); }
+		var tagged = (tiddler.fields.tags || []).some(function(tag){ return markers.indexOf(tag) !== -1; });
+		if(tiddler.fields[DUE_FIELD] || tagged){ results.push(title); }
 	});
 	return results;
 }
@@ -438,10 +477,10 @@ function byCaption(wiki){
 	};
 }
 
-/* Most recently finished first, so the Done list reads as a history */
+/* The latest deadline first, so the Done list reads newest at the top */
 function byDone(wiki){
 	return function(a,b){
-		var x = doneDate(wiki,a), y = doneDate(wiki,b);
+		var x = dueDate(wiki,a), y = dueDate(wiki,b);
 		var xt = x ? x.getTime() : 0, yt = y ? y.getTime() : 0;
 		if(xt !== yt){ return xt < yt ? 1 : -1; }
 		return byCaption(wiki)(a,b);
@@ -470,12 +509,16 @@ function select(wiki,titles,want,now){
 
 /* Every tag that has a task under it, busiest first */
 function tags(wiki){
-	var counts = Object.create(null), names = [];
+	var counts = Object.create(null), names = [], skip = markerTags(wiki);
 	wiki.each(function(tiddler,title){
-		if(isSystem(title) || !tiddler.fields[DUE_FIELD]){ return; }
+		/*
+		Asking whether the thing is a task, not whether it has a date: a tag
+		whose tasks are all still unscheduled deserves a chip too.
+		*/
+		if(isSystem(title) || !isTask(wiki,title)){ return; }
 		var open = !isDone(wiki,title);
 		(tiddler.fields.tags || []).forEach(function(tag){
-			if(!tag || isSystem(tag)){ return; }
+			if(!tag || isSystem(tag) || skip.indexOf(tag) !== -1){ return; }
 			if(!(tag in counts)){ counts[tag] = 0; names.push(tag); }
 			if(open){ counts[tag]++; }
 		});
@@ -532,7 +575,9 @@ function setField(wiki,title,field,value){
 }
 
 function setDue(wiki,title,stamp){
-	return setField(wiki,title,DUE_FIELD,stamp || "");
+	var changed = setField(wiki,title,DUE_FIELD,stamp || "");
+	if(stamp){ changed = syncTags(wiki,title) || changed; }
+	return changed;
 }
 
 /* Put a task `days` from today, keeping whatever time of day it already had */
@@ -557,8 +602,61 @@ function shiftDue(wiki,title,days){
 	return stringify(when);
 }
 
+/*
+Something the plugin is entitled to tag: it has one of the date fields on
+it, or it is already carrying one of the tags. Without this the todo tag
+could be put on any tiddler at all.
+*/
+function isTask(wiki,title){
+	var tiddler = wiki.getTiddler(title);
+	if(!tiddler){ return false; }
+	return !!(tiddler.fields[DUE_FIELD] ||
+		hasTag(tiddler,todoTag(wiki)) || hasTag(tiddler,doneTag(wiki)));
+}
+
+/*
+The todo tag marks a tiddler as a task, and that does not stop being true
+when the task is finished, so it goes on and it stays on. A finished task
+carries both tags: todo says what it is, done says where it has got to.
+
+Also migrates the `done` field that earlier versions wrote. The tag has
+replaced it, so the field is turned into a tag and cleared -- otherwise a
+task finished under an earlier version would read as outstanding again.
+*/
+function syncTags(wiki,title){
+	var tiddler = wiki.getTiddler(title);
+	if(!tiddler || !isTask(wiki,title)){ return false; }
+	var add = [], remove = [], fields = {}, changed = false;
+	var todo = todoTag(wiki);
+	if(todo){ add.push(todo); }
+	if(String(tiddler.fields[DONE_FIELD] || "").trim()){
+		fields[DONE_FIELD] = "";
+		changed = true;
+		var done = doneTag(wiki);
+		if(done){ add.push(done); }
+	}
+	var tags = withTags(tiddler,add,remove);
+	if(tags){
+		fields.tags = tags;
+		changed = true;
+	}
+	if(!changed){ return false; }
+	wiki.addTiddler(new $tw.Tiddler(tiddler,fields,wiki.getModificationFields()));
+	return true;
+}
+
+/*
+Finish a task, or put it back. Only the done tag moves: todo stays on,
+because the tiddler is a task either way.
+*/
 function setDone(wiki,title,state){
-	return setField(wiki,title,DONE_FIELD,state ? stringify(new Date()) : "");
+	var tiddler = wiki.getTiddler(title);
+	if(!tiddler){ return false; }
+	var done = doneTag(wiki), todo = todoTag(wiki);
+	var tags = state ? withTags(tiddler,[todo,done],[]) : withTags(tiddler,[todo],[done]);
+	if(!tags){ return false; }
+	wiki.addTiddler(new $tw.Tiddler(tiddler,{tags:tags},wiki.getModificationFields()));
+	return true;
 }
 
 /*
@@ -576,6 +674,7 @@ function completeRepeat(wiki,title){
 	fields[DUE_FIELD] = stringify(next);
 	fields[LASTDONE_FIELD] = stringify(new Date());
 	wiki.addTiddler(new $tw.Tiddler(tiddler,fields,wiki.getModificationFields()));
+	syncTags(wiki,title);
 	return true;
 }
 
@@ -606,6 +705,7 @@ function add(wiki,options){
 		fields.text = "";
 		wiki.addTiddler(new $tw.Tiddler(wiki.getCreationFields(),fields,wiki.getModificationFields()));
 	}
+	syncTags(wiki,title);
 	return title;
 }
 
@@ -625,6 +725,11 @@ exports.isDeferred = isDeferred;
 exports.priorityRank = priorityRank;
 exports.priorityName = priorityName;
 exports.setField = setField;
+exports.doneTag = doneTag;
+exports.todoTag = todoTag;
+exports.markerTags = markerTags;
+exports.syncTags = syncTags;
+exports.isTask = isTask;
 exports.NOW_TIDDLER = NOW_TIDDLER;
 exports.BUCKETS = BUCKETS;
 exports.CAPTIONS = CAPTIONS;

@@ -1,11 +1,12 @@
 \whitespace trim
 <$list filter="[[$:/config/tasks/pagebadge]get[text]!match[no]]" variable="tknone">
 <$vars tknow={{$:/temp/tasks/now}}>
-<$list filter="[taskscope[]taskselect[overdue],<tknow>count[]!match[0]]" variable="tkcount">
-<$button to="Tasks" tooltip={{{ [<tkcount>addprefix[Overdue tasks: ]] }}} aria-label="Overdue tasks" class=<<tv-config-toolbar-class>>>
-<span class="tk-pagebadge">◴&#32;<$text text=<<tkcount>>/></span>
-<$list filter="[<tv-config-toolbar-text>match[yes]]" variable="tknone"><span class="tc-btn-text">&#32;overdue</span></$list>
+<$vars tkoverdue={{{ [taskscope[]taskselect[overdue],<tknow>count[]] }}}>
+<$button to="Tasks" tooltip={{{ [<tkoverdue>match[0]then[Open the task list]] ~[<tkoverdue>addprefix[Overdue tasks: ]] }}} aria-label="Tasks" class=<<tv-config-toolbar-class>>>
+<span class="tk-glyph">◴</span>
+<$list filter="[<tkoverdue>!match[0]]" variable="tknone"><span class="tk-pagebadge"><$text text=<<tkoverdue>>/></span></$list>
+<$list filter="[<tv-config-toolbar-text>match[yes]]" variable="tknone"><span class="tc-btn-text">&#32;Tasks</span></$list>
 </$button>
-</$list>
+</$vars>
 </$vars>
 </$list>

@@ -36,8 +36,8 @@ tiddlers = [
      "description": "Set a due date for this tiddler",
      "text": read("toolbar.tid")},
     {"title": "%s/pagecontrol" % P, "tags": "$:/tags/PageControls",
-     "caption": "◴ Overdue tasks",
-     "description": "How many tasks are overdue, with a link to the task list",
+     "caption": "◴ Tasks",
+     "description": "Opens the task list, with a count of anything overdue",
      "text": read("pagecontrol.tid")},
     {"title": "%s/readme" % P, "text": read("readme.tid")},
 
@@ -50,6 +50,8 @@ tiddlers = [
     {"title": "$:/config/tasks/overduecolour", "text": ""},
     {"title": "$:/config/tasks/showdeferred", "text": "no"},
     {"title": "$:/config/tasks/pagebadge", "text": "yes"},
+    {"title": "$:/config/tasks/donetag", "text": "done"},
+    {"title": "$:/config/tasks/todotag", "text": "todo"},
 ]
 
 seen = set()
@@ -63,7 +65,7 @@ plugin = {
     "name": "Tasks",
     "description": "Due dates, repeats and priorities on your tiddlers, with a date-ordered task list for any tag",
     "author": "Claude",
-    "version": "1.1.0",
+    "version": "1.6.1",
     "core-version": ">=5.2.0",
     "plugin-type": "plugin",
     "dependents": "",

@@ -16,7 +16,9 @@
 <div class="tk-pop-head">Settings</div>
 <div class="tk-field"><span class="tk-field-label">Default time of day for a new due date</span><$edit-text tiddler="$:/config/tasks/defaulttime" tag="input" type="time" default="23:59" class="tk-input tk-input-time"/></div>
 <div class="tk-field"><label class="tk-check-line"><$checkbox tiddler="$:/config/tasks/inline" field="text" checked="yes" unchecked="no" default="yes"/> <span>Show the task list on a tag's own tiddler</span></label></div>
-<div class="tk-field"><label class="tk-check-line"><$checkbox tiddler="$:/config/tasks/pagebadge" field="text" checked="yes" unchecked="no" default="yes"/> <span>Show an overdue count in the sidebar</span></label></div>
+<div class="tk-field"><label class="tk-check-line"><$checkbox tiddler="$:/config/tasks/pagebadge" field="text" checked="yes" unchecked="no" default="yes"/> <span>Show a Tasks button in the sidebar</span></label></div>
+<div class="tk-field"><span class="tk-field-label">Tag put on outstanding tasks</span><$edit-text tiddler="$:/config/tasks/todotag" tag="input" default="todo" class="tk-input" placeholder="blank = do not tag them"/></div>
+<div class="tk-field"><span class="tk-field-label">Tag put on finished tasks</span><$edit-text tiddler="$:/config/tasks/donetag" tag="input" default="done" class="tk-input" placeholder="blank = do not tag them"/></div>
 <div class="tk-field"><span class="tk-field-label">Overdue colour</span><$edit-text tiddler="$:/config/tasks/overduecolour" tag="input" default="" class="tk-input" placeholder="blank = pick one automatically"/></div>
 <div class="tk-pop-note">Set a colour here if overdue tasks are hard to read — the automatic choice follows your system's light/dark setting, which cannot see a palette you picked by hand.</div>
 <div class="tk-pop-note">Each task keeps its own due date in a due field, so your tasks travel with the wiki rather than with this plugin.</div>

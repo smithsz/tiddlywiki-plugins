@@ -3,6 +3,18 @@
 Due dates for your tiddlers, and a list per tag that shows what is coming
 up and what has already slipped past.
 
+!! Opening the task list
+Press ''◴'' in the sidebar, at the top of the page. That is the way in, and
+it carries a count when anything is overdue.
+
+The list lives in a tiddler called ''Tasks''. Being part of this plugin it
+is a shadow tiddler, which means the sidebar search will not turn it up —
+searching only looks through tiddlers you have made yourself. To reach it
+without the button, put `#Tasks` on the end of the wiki's address, or look
+under ''More → Shadows'' in the sidebar.
+
+If you want it open every time, add `Tasks` to ''$:/DefaultTiddlers''.
+
 !! The idea
 A task is an ordinary tiddler with a ''due date''. Tag your tasks with
 whatever groups them — a subject, a project, a client, a room of the house —
@@ -32,8 +44,9 @@ stamp — but `2026-11-25` and `2026-11-25T09:30` are understood too and get
 tidied into that form the next time the task is edited through the plugin.
 
 !! The task list
-Open the ''Tasks'' tiddler for every task in the wiki, and press a tag along
-the top to narrow it to that tag. Tasks are ordered by due date throughout,
+The ''Tasks'' tiddler lists every task in the wiki; press a tag along the
+top to narrow it to that tag. There is a button there for every tag you have
+put a task under, whether or not those tasks have dates yet. Tasks are ordered by due date throughout,
 grouped under ''Overdue'', ''Today'', ''Tomorrow'', ''This week'', ''Later''
 and ''No due date''.
 
@@ -93,17 +106,52 @@ on the Tasks tiddler.
 `<<tasks YourTag>>` drops the list for a tag into any tiddler, so a daily
 note or a project tiddler can carry its own.
 
+!! The todo and done tags
+Tasks are marked with tags, so that the rest of your wiki can see what is
+going on without knowing anything about this plugin:
+
+* `todo` on every task, from the moment it becomes one
+* `done` added on top once it is finished
+
+`todo` says what the tiddler ''is''; `done` says where it has ''got to''.
+They are not opposites and a finished task carries both, so `[tag[todo]]`
+gives you every task and `[tag[todo]!tag[done]]` the ones still outstanding.
+Both show on the tiddler like any other tag.
+
+The done tag is the only thing that marks a task finished, so tagging a
+tiddler `done` by hand completes it and pulling the tag off puts it back on
+the list. Nothing records ''when'' it was finished.
+
+`todo` goes on and stays on. Unscheduling a task does not take it off —
+something with no date yet is still a task — and neither does finishing it.
+A recurring task is never tagged `done`, because ticking it off moves it on
+to its next turn rather than finishing it.
+
+Neither tag is offered along the top of the ''Tasks'' tiddler, since every
+task carries one: ''All'' already shows them. Neither is drawn on the rows
+either, where it would be on every line.
+
+A task picks up its tags as you touch it — when it is made, and whenever its
+due date is set. Tasks made before the tags existed get them the next time
+you give them a date.
+
+If `todo` or `done` is already a tag you use for something else, rename it
+under ''⚙'', or empty it to leave that marker off altogether. Tasks already
+tagged keep the old tag, so renaming suits a wiki you are setting up rather
+than one already full of tasks.
+
 !! Done
-Finishing a task writes the time to a `done` field and moves it to the
-''Done'' list at the foot of the view, hidden until you ask for it. Tick the
-box again to put it back.
+Finished tasks move to the ''Done'' list at the foot of the view, hidden
+until you ask for it, with the latest deadline at the top.
 
 !! Fields
 Everything lives in fields on the task itself:
 
 * `due` — when it is due, as a 17 digit stamp. No field, or an empty one,
 means unscheduled.
-* `done` — when it was finished. Absent or empty means it is still open.
+* `done` — ''not used''. Completion is the `done` tag. Versions before 1.5
+wrote a timestamp here, and it no longer means anything; tick such a task
+off and on again to mark it done the new way.
 * `repeat` — how often it comes round: `daily`, `weekly`, `every 3 days`.
 Anything unreadable is pointed out in the popup and treated as no repeat.
 * `priority` — `high`, `medium` or `low`.
@@ -116,6 +164,10 @@ Under ''⚙'' on the Tasks tiddler:
 * the time of day a bare date falls due — 23:59 unless you change it
 * whether a tag's own tiddler carries its list
 * whether the sidebar shows a count of overdue tasks
+* the ''tag put on outstanding tasks'' — `todo` unless you change it, and
+blank for none
+* the ''tag put on finished tasks'' — `done` unless you change it, and blank
+for none
 * the ''overdue colour''. Left blank, the plugin picks a red to suit your
 system's light or dark setting. That is a guess: a TiddlyWiki palette is
 chosen separately from the system setting, so a dark palette on a light
