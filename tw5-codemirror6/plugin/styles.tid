@@ -75,6 +75,22 @@ tags: [[$:/tags/Stylesheet]]
 	cursor: pointer;
 }
 
+/*
+The chip standing in for a folded range keeps its colours in the bundle,
+where they are light mode only: #eee on a #ddd border with #888 text, which
+is a pale box on a dark palette. Geometry stays CodeMirror's; only the
+colours come from here, muted the way the gutter and the placeholder above
+are: foreground at an opacity, rather than muted-foreground, which is #bbb
+under Vanilla and would read fainter on the chip than what it replaces.
+Reachable with foldGutter on, which it is not by default.
+*/
+.cm6tw-wrapper .cm-foldPlaceholder {
+	background-color: rgba(127,127,127,0.18);
+	border: 1px solid <<colour tiddler-editor-border>>;
+	color: <<colour foreground>>;
+	opacity: 0.7;
+}
+
 /* Search / replace panel */
 
 .cm6tw-wrapper .cm-panels {
@@ -99,6 +115,20 @@ tags: [[$:/tags/Stylesheet]]
 
 .cm6tw-wrapper .cm-searchMatch-selected {
 	background-color: rgba(243,155,53,0.6);
+}
+
+/*
+Other occurrences of whatever is selected. The bundle's colour for these is
+also light mode only, #99ff7780, a bright green that clashed with the orange
+above, and highlightSelectionMatches is on by default so it was the one on
+show. A weak tint of the selection colour instead, since that is what they
+are. The flat grey ahead of it stands in where color-mix is unsupported.
+Either wins over the bundle: style-mod mounts those styles at the top of the
+head so a plain override of the same weight is enough.
+*/
+.cm6tw-wrapper .cm-selectionMatch {
+	background-color: rgba(127,127,127,0.25);
+	background-color: color-mix(in srgb, <<colour primary>> 25%, transparent);
 }
 
 /* Autocomplete tooltip */
