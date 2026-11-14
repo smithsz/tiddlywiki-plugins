@@ -65,7 +65,7 @@ plugin = {
     "name": "Tasks",
     "description": "Due dates, repeats and priorities on your tiddlers, with a date-ordered task list for any tag",
     "author": "Claude",
-    "version": "1.6.1",
+    "version": "1.6.2",
     "core-version": ">=5.2.0",
     "plugin-type": "plugin",
     "dependents": "",

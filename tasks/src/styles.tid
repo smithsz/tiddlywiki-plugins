@@ -115,10 +115,22 @@ html{--tk-overdue:<<tkcolour>>;}
 .tk-btn-primary{background:#5778d8;background:<<colour primary>>;border-color:#5778d8;border-color:<<colour primary>>;color:#fff;}
 .tk-btn-primary:hover{filter:brightness(1.08);background:#5778d8;background:<<colour primary>>;}
 
-/* The toolbar button takes the colour of whatever it is pointing at */
-.tk-glyph{font-style:normal;}
-.tk-glyph-overdue{color:var(--tk-overdue);}
-.tk-glyph-today,.tk-glyph-tomorrow{color:#5778d8;color:<<colour primary>>;}
+/*
+The glyph is a text character, not an SVG, so the core rule that softens
+toolbar icons misses it -- that rule sets fill. Left alone it inherits the
+tiddler's near-black text and shouts next to the close button, so take the
+palette's control colours, the ones those icons are filled with. The literal
+greys are the Vanilla values, there for a palette that leaves the entry out;
+the hover rules need none, since the base colour just stays.
+*/
+.tk-glyph{font-style:normal;color:#ccc;color:<<colour tiddler-controls-foreground>>;}
+.tc-page-controls .tk-glyph{color:#aaa;color:<<colour sidebar-controls-foreground>>;}
+.tc-tiddler-controls button:hover .tk-glyph{color:<<colour tiddler-controls-foreground-hover>>;}
+.tc-page-controls button:hover .tk-glyph{color:<<colour sidebar-controls-foreground-hover>>;}
+
+/* The toolbar button takes the colour of whatever it is pointing at, hover included */
+.tk-glyph-overdue,.tc-tiddler-controls button:hover .tk-glyph-overdue{color:var(--tk-overdue);}
+.tk-glyph-today,.tk-glyph-tomorrow,.tc-tiddler-controls button:hover .tk-glyph-today,.tc-tiddler-controls button:hover .tk-glyph-tomorrow{color:#5778d8;color:<<colour primary>>;}
 
 @media (max-width:750px){
 .tk-row-tools .tk-tool{opacity:.6;}

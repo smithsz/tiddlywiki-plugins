@@ -495,6 +495,14 @@ $tw.boot.boot(function () {
 		contains(name + " is read back", css, "var(" + name + ")");
 	});
 	contains("overdue colours the row title", css, ".tk-overdue .tk-title{color:var(--tk-overdue)");
+	/* The ◴ is text, so nothing greys it for us: it has to ask the palette
+	   for the colour the core toolbar icons are drawn in, or it comes out
+	   near-black beside them. <<colour>> is empty in this harness, which is
+	   what the literal grey beside each one is for. */
+	contains("the toolbar glyph takes the control colour", css, ".tk-glyph{font-style:normal;color:#ccc;color:");
+	contains("and the sidebar's its own", css, ".tc-page-controls .tk-glyph{color:#aaa;color:");
+	contains("hovering brightens it", css, ".tc-tiddler-controls button:hover .tk-glyph{color:");
+	contains("a due date still outranks the grey on hover", css, ".tc-tiddler-controls button:hover .tk-glyph-overdue{color:var(--tk-overdue)");
 	contains("a dark background gets the lighter red", css, "prefers-color-scheme:dark");
 	absent("no selector starts a line with a definition-list marker", css, "\n:");
 	absent("no override is set by default", css, "html{--tk-overdue:;}");
