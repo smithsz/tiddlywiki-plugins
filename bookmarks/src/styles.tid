@@ -101,7 +101,18 @@ the offsetParent of the buttons but not of the dropdowns hanging off them.
 .bm-mbtn{flex:0 0 auto;padding:2px 5px;border:none;border-radius:4px;background:transparent;color:inherit;font-size:12px;line-height:1.2;opacity:.55;cursor:pointer;}
 .bm-mbtn:hover{opacity:1;background:rgba(127,127,127,.18);}
 .bm-mdel:hover{color:#c0392b;}
-.bm-star{display:inline-block;}
+/*
+The star is a text character, not an SVG, so the core rule that softens
+toolbar icons never reaches it: that rule sets fill, and the star is left
+inheriting the tiddler's near-black text. Ask the palette instead. The hollow
+one takes the colour those icons are filled with and the solid one the colour
+core gives a toolbar button that is already on, so being bookmarked still
+reads at a glance. Literal greys are the Vanilla values, there in case a
+palette leaves the entry out.
+*/
+.bm-star{display:inline-block;color:#ccc;color:<<colour tiddler-controls-foreground>>;}
+.bm-star-on{color:#444;color:<<colour tiddler-controls-foreground-selected>>;}
+.tc-tiddler-controls button:hover .bm-star{color:#888;color:<<colour tiddler-controls-foreground-hover>>;}
 
 @media (max-width:750px){
 .bm-item{max-width:130px;}
