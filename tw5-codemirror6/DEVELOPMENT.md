@@ -39,14 +39,21 @@ The plugin is distributed as a single JSON file. To regenerate it:
 
 ```bash
 cd test-wiki
-npx tiddlywiki . --render "$:/temp/export-codemirror6" "output/codemirror6-plugin.json" "text/plain"
+npx tiddlywiki . --render "$:/temp/export-codemirror6" "codemirror6-plugin.json" "text/plain"
 cp output/codemirror6-plugin.json ../codemirror6-plugin.json
 ```
 
 Or as a one-liner from the project root:
 ```bash
-cd test-wiki && npx tiddlywiki . --render "$:/temp/export-codemirror6" "output/codemirror6-plugin.json" "text/plain" && cp output/codemirror6-plugin.json ../codemirror6-plugin.json
+cd test-wiki && npx tiddlywiki . --render "$:/temp/export-codemirror6" "codemirror6-plugin.json" "text/plain" && cp output/codemirror6-plugin.json ../codemirror6-plugin.json
 ```
+
+Note that `--render` resolves its filename against the wiki's output folder,
+so the name is passed bare and the file arrives in `test-wiki/output/`.
+Passing `output/codemirror6-plugin.json` puts it in `test-wiki/output/output/`
+instead, and the `cp` then copies whatever stale file the previous run left
+behind. `test-wiki/plugins/codemirror6` is a symlink to `plugin/`, so the
+render always picks up the working tree with no copying needed.
 
 ## Testing
 
