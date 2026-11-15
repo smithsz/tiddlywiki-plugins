@@ -1,0 +1,63 @@
+title: $:/my/fullscreen-editor-css
+tags: $:/tags/Stylesheet
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline macrocallblock html commentinline commentblock
+
+<$list filter="[[$:/state/my/fullscreen-editor]get[text]!match[none]]" variable="ignore">
+<$let fs={{{ [[$:/state/my/fullscreen-editor]get[text]escapecss[]] }}}>
+
+/* 1. Hide outer interface clutter while editing */
+body:has(.tc-tiddler-edit-frame[data-tiddler-title=<<fs>>]) .tc-topbar,
+body:has(.tc-tiddler-edit-frame[data-tiddler-title=<<fs>>]) .tc-sidebar-scrollable,
+body:has(.tc-tiddler-edit-frame[data-tiddler-title=<<fs>>]) .tc-page-controls {
+  display: none !important;
+}
+
+/* 2. Fullscreen overlay, only for the draft the button was clicked in */
+.tc-tiddler-edit-frame[data-tiddler-title=<<fs>>] {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999 !important;
+  background: <<colour tiddler-background>> !important;
+  overflow-y: auto !important;
+  padding: 24px !important;
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  display: block !important;
+}
+
+/* 3. Keep the title bar (and its Fullscreen button) pinned */
+.tc-tiddler-edit-frame[data-tiddler-title=<<fs>>] .tc-tiddler-edit-title {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 3 !important;
+  background: <<colour tiddler-background>> !important;
+  padding: 8px 0 !important;
+  margin: 0 !important;
+}
+
+/* 4. Roomy editor: textarea and CodeMirror 6 */
+.tc-tiddler-edit-frame[data-tiddler-title=<<fs>>] textarea.tc-edit-texteditor {
+  width: 100% !important;
+  min-height: 60vh !important;
+  font-size: 1.05rem !important;
+  line-height: 1.6 !important;
+  padding: 12px !important;
+  border-radius: 4px !important;
+  box-sizing: border-box !important;
+  margin: 8px 0 !important;
+}
+.tc-tiddler-edit-frame[data-tiddler-title=<<fs>>] .cm6tw-wrapper {
+  margin: 8px 0 !important;
+  font-size: 1.05rem !important;
+}
+.tc-tiddler-edit-frame[data-tiddler-title=<<fs>>] .cm6tw-wrapper .cm-editor {
+  min-height: 60vh !important;
+}
+
+</$let>
+</$list>

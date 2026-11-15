@@ -1,0 +1,69 @@
+title: Fullscreen Editing
+modified: 20261114000000000
+created: 20261114000000000
+
+A toggle that makes the tiddler you are editing fill the window, like a modal. Off by default; turn it on per-session with the ⛶ button in the edit-mode toolbar, next to save/cancel/delete.
+
+!! The moving parts
+
+Two tiddlers of mine, plus one state tiddler that appears on first use.
+
+;[[$:/my/fullscreen-editor-css]]
+: Tagged `$:/tags/Stylesheet`. All the CSS. Every rule is wrapped in a `<$list>` gate so it only applies when the state tiddler says `yes`.
+;[[$:/my/Buttons/fullscreen-editing]]
+: Tagged `$:/tags/EditToolbar`, which is the toolbar in a tiddler's title bar while editing (''not'' `$:/tags/EditorToolbar`, which is the bold/italic row above the text area). Flips the state tiddler and swaps its own icon.
+;`$:/state/my/fullscreen-editor`
+: Holds the ''title of the draft'' that is currently fullscreened, e.g. `Draft of 'Foo'`, or `none` when off. Created on first click. Lives under `$:/state/` so it is ''saved with the wiki'' — the setting is sticky across reloads. Move it to `$:/temp/` if you would rather it reset each session.
+
+!! How the scoping works
+
+The CSS targets ''one specific draft'' rather than every edit frame, which is what stops the wrong tiddler going fullscreen when two are open.
+
+The edit frame carries the draft title in an attribute — `$:/core/ui/EditTemplate` renders `data-tiddler-title=<<currentTiddler>>`, and in edit mode `currentTiddler` is the draft. So the stylesheet builds a selector from the state tiddler:
+
+```
+<$list filter="[[$:/state/my/fullscreen-editor]get[text]!match[none]]" variable="ignore">
+<$let fs={{{ [[$:/state/my/fullscreen-editor]get[text]escapecss[]] }}}>
+.tc-tiddler-edit-frame[data-tiddler-title=<<fs>>] { ... }
+</$let>
+</$list>
+```
+
+`escapecss` is what makes an arbitrary title safe in a selector — `Draft of 'Foo'` comes out as `Draft\ of\ \'Foo\'`. Core uses the same trick in `$:/core/ui/EditorToolbar/link-dropdown`. The attribute value is deliberately ''unquoted'', because that is what the escaping is designed for.
+
+The stylesheet needs this pragma, without which a widget inside a stylesheet renders as literal text:
+
+```
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline macrocallblock html commentinline commentblock
+```
+
+`html` parses the widgets, `filteredtranscludeinline` parses `{{{ ... }}}`, and `macrocallinline` is what lets `<<fs>>` and `<<colour tiddler-background>>` resolve. Palette macros work here because `$:/core/ui/PageStylesheet` wraps every stylesheet in `\import [subfilter{$:/core/config/GlobalImportFilter}]`.
+
+The button toggles by storing its own draft title, using `none` as the off value:
+
+```
+<$action-setfield $tiddler="$:/state/my/fullscreen-editor"
+  $value={{{ [[$:/state/my/fullscreen-editor]get[text]match<currentTiddler>then[none]else<currentTiddler>] }}}/>
+```
+
+Three cases, all of which fall out of that one filter: already fullscreen in this draft → `none`; fullscreen in a different draft → switches to this one; state missing entirely → the `else` operator fires on the empty run and supplies this draft's title.
+
+!! Turning it off
+
+* Click the button again — it is a toggle, and the icon becomes the fold icon while fullscreen is active.
+* Save (cmd-Enter) or cancel (Escape) the draft. Edit mode ends, `.tc-tiddler-edit-frame` stops existing, the CSS stops matching. The state stays `yes`, so the ''next'' edit is fullscreen again.
+* Emergency, from the browser console: `$tw.wiki.setText("$:/state/my/fullscreen-editor","text",null,"no")`
+
+!! Gotchas worth remembering
+
+* ''Two drafts at once.'' This is why the selector is scoped to one draft title. An earlier version targeted `.tc-tiddler-edit-frame` flat, so both frames became `position: fixed` overlays at the same `z-index` and the later one in DOM order won — meaning the wrong tiddler appeared to go fullscreen.
+* ''Stale state.'' After you save, the draft tiddler disappears but its title stays in the state tiddler. Harmless, since no frame matches it any more. Re-editing the same tiddler usually reproduces the same draft title, so it will come up fullscreen again.
+* ''CodeMirror 6 has no textarea.'' A rule targeting `textarea.tc-edit-texteditor` is dead code under [[$:/plugins/samsmith/codemirror6]]; the editor is `.cm6tw-wrapper .cm-editor`. The `min-height` has to go on `.cm-editor`, not on the wrapper — the plugin's own stylesheet sets `.cm-editor { height: 100% }`, and a percentage height against an auto-height parent resolves to auto.
+* ''Hardcoded background.'' If the overlay uses a literal hex like `#f4f3ee`, toolbar icons inherit their colour from the palette and can end up invisible on a dark palette. Prefer `<<colour tiddler-background>>`.
+* ''Scrolling.'' The overlay is `overflow-y: auto`, so the title bar — and therefore the button — can scroll out of view. The sticky rule on `.tc-tiddler-edit-title` pins it.
+* ''Editor-toolbar buttons can be hidden by config.'' `$:/config/EditorToolbarButtons/Visibility/<button title>` set to `hide` silently removes a button from the bold/italic row. Control Panel → Toolbars → Editor Toolbar writes it. This bit me once. The edit-mode title-bar equivalent is `$:/config/EditToolbarButtons/Visibility/<button title>`.
+* ''Unlisted toolbar buttons sort last.'' `$:/tags/EditorToolbar` and `$:/tags/EditToolbar` both carry an explicit `list` field, so a new button is appended to the end unless it has a `list-before` or `list-after` field. Mine uses `list-before: $:/core/ui/Buttons/save`.
+
+!! Adding a keyboard shortcut
+
+The `shortcuts` field only works for buttons in the editor toolbar — the edit widget scans that toolbar's DOM for `data-tw-keyboard-shortcut` attributes. For a title-bar button, make a separate tiddler tagged `$:/tags/KeyboardShortcut` with `key: ((my-fullscreen))` and the `$action-setfield` above as its text, then define `$:/config/shortcuts/my-fullscreen` as e.g. `ctrl-shift-F`.

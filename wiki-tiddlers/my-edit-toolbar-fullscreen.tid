@@ -1,0 +1,16 @@
+title: $:/my/Buttons/fullscreen-editing
+tags: $:/tags/EditToolbar
+caption: {{$:/core/images/full-screen-button}} Fullscreen
+description: Toggle fullscreen editing for this draft
+list-before: $:/core/ui/Buttons/save
+
+\whitespace trim
+<$button tooltip="Toggle fullscreen editing" aria-label="Toggle fullscreen editing" class=<<tv-config-toolbar-class>>>
+<$action-setfield $tiddler="$:/state/my/fullscreen-editor" $value={{{ [[$:/state/my/fullscreen-editor]get[text]match<currentTiddler>then[none]else<currentTiddler>] }}}/>
+<$list filter="[<tv-config-toolbar-icons>match[yes]]" variable="ignore">
+<$transclude tiddler={{{ [[$:/state/my/fullscreen-editor]get[text]match<currentTiddler>then[$:/core/images/fold-button]else[$:/core/images/full-screen-button]] }}}/>
+</$list>
+<$list filter="[<tv-config-toolbar-text>match[yes]]" variable="ignore">
+<span class="tc-btn-text">Fullscreen</span>
+</$list>
+</$button>
